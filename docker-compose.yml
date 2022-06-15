@@ -1,1 +1,14 @@
 version: '3'
+
+services: 
+  database:
+    image: 'postgres:14.3'
+
+    ports:
+      - 5050:5050
+
+    environment:
+      POSTGRES_USER: FieroDB
+      # mudar senha antes de por em producao
+      POSTGRES_PASSWORD: dbpwd123AHAM
+      POSTGRES_DB: database
