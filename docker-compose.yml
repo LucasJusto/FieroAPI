@@ -1,14 +1,37 @@
 version: '3'
 
 services: 
-  database:
-    image: 'postgres:14.3'
-
+  node-api:
+    build: .
+    image: node:16.13.0-alpine3.11
+    restart: always
     ports:
-      - 5050:5050
-
+      - 3030:3030 # defining port for our app
+    depends_on:
+      - database
+    networks:
+      - app-network
+    #this command \/ can help later (MODIFY BEFORE USING)
+    #command: sh -c "chmod +x ./wait-for-it.sh && ./wait-for-it.sh -t 0 cinedb:3306 && npm run typeorm -- migration:run && npm run tsoa:gen && npm start"
+  database:
+    image: postgres:14.3
+    ports:
+      - 5432:5432
+    restart: always
     environment:
       POSTGRES_USER: FieroDB
       # mudar senha antes de por em producao
       POSTGRES_PASSWORD: dbpwd123AHAM
       POSTGRES_DB: database
+    volumes:
+      - pgdata:/data/postgres
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
