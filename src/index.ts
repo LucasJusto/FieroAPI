@@ -1,11 +1,5 @@
-const express = require('express')
-const app = express()
-const port = 3030
+import server from './server.js'
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-app.listen(port, () => {
-  console.log(`server running at port ${port}`)
+server.listen('3333', () => {
+	console.log('Server is running')
 })
