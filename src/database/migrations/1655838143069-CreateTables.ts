@@ -17,6 +17,10 @@ export class CreateTables1655838143069 implements MigrationInterface {
                   type: 'varchar',
                 },
                 {
+                    name: 'password',
+                    type: 'varchar',
+                },
+                {
                     name: 'is_active',
                     type: 'boolean',
                     default: 'true',
@@ -38,7 +42,7 @@ export class CreateTables1655838143069 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query("DROP TABLE cuser")
+        await queryRunner.dropTable('user');
     }
 
 }
