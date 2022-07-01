@@ -8,7 +8,7 @@ export default {
   username: "FieroDB",
   password: "dbpwd123AHAM",
   logging: false,
-  entities: ["src/models/*.ts"],
+  entities: ["src/Model/*.ts"],
   migrations: ["src/database/migrations/*.ts"],
   cli: {
     migrationsDir: "src/database/migrations",

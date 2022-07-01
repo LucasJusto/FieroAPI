@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
       "module": "ESNext",
       "esModuleInterop": true,
       "target": "ESNext",
@@ -9,6 +11,7 @@
       "noFallthroughCasesInSwitch": true,
       "isolatedModules": false,
       "strict": true,
+      "strictPropertyInitialization": false,
       "noImplicitAny": true,
       "useUnknownInCatchVariables": false,
       "inlineSourceMap": true
@@ -17,5 +20,5 @@
         "esm": true
     },
     "lib": ["esnext"],
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
 }
