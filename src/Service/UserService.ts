@@ -1,9 +1,10 @@
-import { Request, Response } from 'express'
-import { HTTPCodes } from '../utils/HTTPEnum'
+import { User } from '../Model/User.js'
+import { UserRepository } from '../Repository/UserRepository.js'
+
+const userRepository = new UserRepository()
 
 export class UserService {
-
-    async handlePost(request: Request, response: Response) {
-
+    async createAccount(user: User) {
+        await userRepository.insert(user)
     }
 }

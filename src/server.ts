@@ -5,6 +5,7 @@ class App {
 	server: express.Express
 	constructor() {
 		this.server = express()
+		this.server.use(express.json())
 		this.server.use(router)
 	}
 }

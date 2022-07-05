@@ -19,4 +19,11 @@ export class User {
 
     @UpdateDateColumn({ name: "updated_At" })
     updatedAt: Date
+
+    constructor(id: string, email: string, name: string, password: string) {
+        this.id = id
+        this.email = email
+        this.name = name
+        this.password = password
+    }
 }
