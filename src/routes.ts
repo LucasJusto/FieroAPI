@@ -1,13 +1,10 @@
 import { Router } from 'express'
 import { validate } from './utils/validate.js'
 import { body } from 'express-validator'
-import { UserService } from './Service/UserService.js'
-import { User } from './Model/User.js'
-import uuidV4 from './utils/uuidv4Generator.js'
-import { HTTPCodes } from './utils/HTTPEnum.js'
+import { UserController } from './Controller/UserController.js'
 
 const router = Router()
-const userService = new UserService()
+const userController = new UserController()
 
 router.get('/', (req, res) => {
     res.send('Hello World!')
@@ -21,25 +18,7 @@ router.post('/user',
         body('name').isString().notEmpty()
     ]),
     async (req, res) => {
-        const { email, name, password } = req.body
-        const user = new User(uuidV4(), email, name, password)
-
-        try {
-            await userService.createAccount(user)
-            res.status(HTTPCodes.Success).json({ message: user })
-
-        } catch (error) {
-            console.log(error.code)
-            switch (error.code) {
-                case 23505: 
-                    //trying to duplicate an unique key
-                    res.status(HTTPCodes.BadRequest).json(error.message)
-                    return
-                default:
-                    res.status(HTTPCodes.InternalServerError).json(error.message)
-            }
-            
-        }
+        userController.handlePost(req, res)
     }
 )
 
