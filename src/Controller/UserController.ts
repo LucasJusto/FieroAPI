@@ -16,12 +16,24 @@ export class UserController {
             res.status(HTTPCodes.Success).json({ message: user })
 
         } catch (error) {
-            console.log(error.code)
             switch (error.code) {
                 case '23505': 
                     //trying to duplicate an unique key
                     res.status(HTTPCodes.Conflict).json(error.message)
                     return;
+                default:
+                    res.status(HTTPCodes.InternalServerError).json(error.message)
+                    return;
+            }
+        }
+    }
+
+    async handleGetAuth(req: Request, res: Response) {
+        try {
+            const token = await userService.getUserAuthToken(req.params.email, req.params.password)
+            res.status(HTTPCodes.Success).json(token)
+        } catch (error) {
+            switch (error.code) {
                 default:
                     res.status(HTTPCodes.InternalServerError).json(error.message)
                     return;

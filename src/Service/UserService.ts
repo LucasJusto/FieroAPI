@@ -7,4 +7,8 @@ export class UserService {
     async createAccount(user: User) {
         await userRepository.insert(user)
     }
+
+    async getUserAuthToken(email: string, password: string) {
+        
+    }
 }
