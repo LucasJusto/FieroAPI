@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { validate } from './utils/validate.js'
+import { validate } from './Middleware/validate.js'
 import { body, param } from 'express-validator'
 import { UserController } from './Controller/UserController.js'
 
