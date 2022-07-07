@@ -1,6 +1,6 @@
 import express from 'express'
 import { validationResult, ValidationChain } from 'express-validator'
-import { HTTPCodes } from './HTTPEnum.js'
+import { HTTPCodes } from '../utils/HTTPEnum.js'
 // can be reused by many routes
 
 // parallel processing

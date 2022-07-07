@@ -1,11 +1,13 @@
 import { User } from '../Model/User.js'
 import { createQueryBuilder, EntityRepository, getCustomRepository, Repository} from 'typeorm'
 
-export class UserRepository {
-    async insert(user: User) {
-        const userRep = getCustomRepository(TORMUserRepository)
 
-        await userRep
+
+export class UserRepository {
+    userRep = getCustomRepository(TORMUserRepository)
+
+    async insert(user: User) {
+        await this.userRep
             .createQueryBuilder()
             .insert()
             .into(User)
@@ -13,6 +15,19 @@ export class UserRepository {
                 { id: user.id, email: user.email, name: user.name, password: user.password }
             ])
             .execute()
+    }
+
+    async getUserByEmail(email: string) {
+        const userFromDB = await this.userRep
+            .createQueryBuilder()
+            .select("user")
+            .from(User, "user")
+            .where("user.email = :email", { email: email })
+            .getOne()
+
+        const user = new User(userFromDB?.id || "", userFromDB?.email || "", userFromDB?.name || "", userFromDB?.password || "")
+
+        return user
     }
 }
 
