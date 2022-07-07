@@ -30,7 +30,7 @@ export class UserController {
 
     async handleGetAuth(req: Request, res: Response) {
         try {
-            const ret = await userService.getUserAuthToken(req.params.email, req.params.password)
+            const ret = await userService.getUserAuthToken(req.body.email, req.body.password)
             res.status(HTTPCodes.Success).json({ token: ret[0], user: ret[1] })
         } catch (error) {
             switch (error.message) {
@@ -41,7 +41,7 @@ export class UserController {
                     res.status(HTTPCodes.NotFound).json(error.message)
                     return
                 default:
-                    res.status(HTTPCodes.InternalServerError).json(error.message)
+                    res.status(HTTPCodes.InternalServerError).json(error)
                     return
             }
         }

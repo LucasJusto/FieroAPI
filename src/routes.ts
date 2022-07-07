@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 })
 
 //USER ROUTES
-router.post('/user',
+router.post('/user/register',
     validate([
         body('email').isEmail(),
         body('password').isString().notEmpty(),
@@ -22,10 +22,10 @@ router.post('/user',
     }
 )
 
-router.get('/user/:email/:password', 
+router.post('/user/login', 
     validate([
-        param('email').isEmail(),
-        param('password').isString().notEmpty()
+        body('email').isEmail(),
+        body('password').isString().notEmpty()
     ]),
     async (req, res) => {
         userController.handleGetAuth(req,res)
