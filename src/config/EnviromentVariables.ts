@@ -7,6 +7,8 @@ const {
   DB_PASSWORD,
   DB_DATABASE,
   DB_PORT,
+  USER_AUTH_TOKEN_KEY,
+  USER_AUTH_TOKEN_EXPIRE_TIME
 } = process.env;
 
 const variables = {
@@ -16,6 +18,8 @@ const variables = {
   DB_PASSWORD,
   DB_DATABASE,
   DB_PORT: Number(DB_PORT),
+  USER_AUTH_TOKEN_KEY,
+  USER_AUTH_TOKEN_EXPIRE_TIME: Number(USER_AUTH_TOKEN_EXPIRE_TIME)
 };
 
 export default variables;
