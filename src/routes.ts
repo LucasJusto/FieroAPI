@@ -18,7 +18,7 @@ router.post('/user/register',
         body('name').isString().notEmpty()
     ]),
     async (req, res) => {
-        userController.handlePost(req, res)
+        userController.handleRegister(req, res)
     }
 )
 
@@ -28,7 +28,7 @@ router.post('/user/login',
         body('password').isString().notEmpty()
     ]),
     async (req, res) => {
-        userController.handleGetAuth(req,res)
+        userController.handleLogin(req,res)
     }
 )
 

@@ -7,13 +7,13 @@ import { Request, Response } from 'express'
 const userService = new UserService()
 
 export class UserController {
-    async handlePost(req: Request, res: Response) {
+    async handleRegister(req: Request, res: Response) {
         const { email, name, password } = req.body
         const user = new User(uuidV4(), email, name, password)
 
         try {
             await userService.createAccount(user)
-            res.status(HTTPCodes.Success).json({ message: user })
+            res.status(HTTPCodes.Success).json({ user: user })
 
         } catch (error) {
             switch (error.code) {
@@ -28,7 +28,7 @@ export class UserController {
         }
     }
 
-    async handleGetAuth(req: Request, res: Response) {
+    async handleLogin(req: Request, res: Response) {
         try {
             const ret = await userService.getUserAuthToken(req.body.email, req.body.password)
             res.status(HTTPCodes.Success).json({ token: ret[0], user: ret[1] })
