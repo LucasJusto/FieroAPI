@@ -1,5 +1,5 @@
 import { User } from '../Model/User.js'
-import { UserService } from '../Service/UserService.js'
+import { UserLoginErrors, UserService } from '../Service/UserService.js'
 import uuidV4 from '../utils/uuidv4Generator.js'
 import { HTTPCodes } from '../utils/HTTPEnum.js'
 import { Request, Response } from 'express'
@@ -34,10 +34,10 @@ export class UserController {
             res.status(HTTPCodes.Success).json({ token: ret[0], user: ret[1] })
         } catch (error) {
             switch (error.message) {
-                case 'wrong password':
+                case UserLoginErrors.wrongEmailPasswordCombination:
                     res.status(HTTPCodes.Forbidden).json(error.message)
                     return
-                case 'user not found':
+                case UserLoginErrors.userNotFound:
                     res.status(HTTPCodes.NotFound).json(error.message)
                     return
                 default:

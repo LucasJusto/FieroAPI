@@ -27,12 +27,17 @@ export class UserService {
             }
             else {
                 //wrong password error
-                throw new Error('wrong password')
+                throw new Error(UserLoginErrors.wrongEmailPasswordCombination)
             }
         }
         else {
             //user doesnt exist error
-            throw new Error('user not found')
+            throw new Error(UserLoginErrors.userNotFound)
         }
     }
+}
+
+export enum UserLoginErrors {
+    wrongEmailPasswordCombination = 'wrong email + password combination',
+    userNotFound = 'user not found'
 }
