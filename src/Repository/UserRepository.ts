@@ -25,7 +25,7 @@ export class UserRepository {
             .where("user.email = :email", { email: email })
             .getOne()
 
-        const user = new User(userFromDB?.id || "", userFromDB?.email || "", userFromDB?.name || "", userFromDB?.password || "")
+        const user = new User(userFromDB?.id || "", userFromDB?.email || "", userFromDB?.name || "", userFromDB?.password, userFromDB?.createdAt, userFromDB?.updatedAt )
 
         return user
     }

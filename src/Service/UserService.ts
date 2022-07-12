@@ -22,8 +22,8 @@ export class UserService {
                 const token = jwt.sign({id}, secretKey, {
                     expiresIn: variables.USER_AUTH_TOKEN_EXPIRE_TIME,
                   })
-
-                return [token, user]
+                const userWithoutPassword = new User(user.id, user.email, user.name, undefined, user.createdAt, user.updatedAt)
+                return [token, userWithoutPassword]
             }
             else {
                 //wrong password error

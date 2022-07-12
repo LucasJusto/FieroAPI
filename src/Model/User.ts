@@ -20,10 +20,18 @@ export class User {
     @UpdateDateColumn({ name: "updated_At" })
     updatedAt: Date
 
-    constructor(id: string, email: string, name: string, password: string) {
+    constructor(id: string, email: string, name: string, password?: string, createdAt?: Date, updatedAt?: Date) {
         this.id = id
         this.email = email
         this.name = name
-        this.password = password
+        if (password) {
+            this.password = password
+        }
+        if(createdAt) {
+            this.createdAt = createdAt
+        }
+        if(updatedAt) {
+            this.updatedAt = updatedAt
+        }
     }
 }
