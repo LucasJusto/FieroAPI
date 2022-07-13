@@ -7,7 +7,7 @@ export class UserService {
     async createAccount(user: User) {
         const userRepository = new UserRepository()
 
-        await userRepository.insert(user)
+        return await userRepository.insert(user)
     }
 
     async getUserAuthToken(email: string, password: string) {

@@ -7,7 +7,7 @@ export class UserRepository {
     userRep = getCustomRepository(TORMUserRepository)
 
     async insert(user: User) {
-        await this.userRep
+        const createdUser = await this.userRep
             .createQueryBuilder()
             .insert()
             .into(User)
@@ -15,6 +15,8 @@ export class UserRepository {
                 { id: user.id, email: user.email, name: user.name, password: user.password }
             ])
             .execute()
+        console.log(createdUser)
+        return new User(user.id, user.email, user.name, undefined, createdUser.raw[0].created_At, createdUser.raw[0].updated_At)
     }
 
     async getUserByEmail(email: string) {

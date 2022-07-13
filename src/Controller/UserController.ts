@@ -12,8 +12,8 @@ export class UserController {
         const user = new User(uuidV4(), email, name, password)
 
         try {
-            await userService.createAccount(user)
-            res.status(HTTPCodes.Success).json({ user: user })
+            const userWithoutPassword = await userService.createAccount(user)
+            res.status(HTTPCodes.Success).json({ user: userWithoutPassword })
 
         } catch (error) {
             switch (error.code) {
