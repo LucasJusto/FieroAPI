@@ -16,10 +16,10 @@ export class QuickChallenge {
     type: string
 
     @Column({ nullable: false, type: 'float' })
-    max: number
+    goal: number
 
     @Column({ nullable: false, type: 'varchar' })
-    measure: string
+    goalMeasure: string
 
     @Column({ nullable: false, type: 'boolean' })
     finished: boolean
@@ -33,13 +33,13 @@ export class QuickChallenge {
     @UpdateDateColumn({ name: "updated_At" })
     updatedAt: Date
 
-    constructor(id: string, name: string, invitationCode: string, type: string, max: number, measure: string, finished: boolean, createdAt?: Date, updatedAt?: Date) {
+    constructor(id: string, name: string, invitationCode: string, type: string, goal: number, goalMeasure: string, finished: boolean, createdAt?: Date, updatedAt?: Date) {
         this.id = id
         this.name = name
         this.invitationCode = invitationCode
         this.type = type
-        this.max = max
-        this.measure = measure
+        this.goal = goal
+        this.goalMeasure = goalMeasure
         this.finished = finished
         if(createdAt) {
             this.createdAt = createdAt
