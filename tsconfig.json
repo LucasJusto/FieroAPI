@@ -2,9 +2,9 @@
     "compilerOptions": {
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
-      "module": "ESNext",
+      "module": "es6",
       "esModuleInterop": true,
-      "target": "ESNext",
+      "target": "es5",
       "moduleResolution": "node",
       "outDir": "dist",
       "forceConsistentCasingInFileNames": true,

@@ -14,6 +14,9 @@ export class User {
     @Column({ nullable: false, type: 'varchar' })
     password: string
 
+    @Column({ nullable: false, type: 'varchar' })
+    salt: string
+
     @CreateDateColumn({ name: "created_At" })
     createdAt: Date
 
