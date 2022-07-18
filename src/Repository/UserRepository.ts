@@ -12,11 +12,10 @@ export class UserRepository {
             .insert()
             .into(User)
             .values([
-                { id: user.id, email: user.email, name: user.name, password: user.password }
+                { id: user.id, email: user.email, name: user.name, password: user.password, salt: user.salt }
             ])
             .execute()
-        console.log(createdUser)
-        return new User(user.id, user.email, user.name, undefined, createdUser.raw[0].created_At, createdUser.raw[0].updated_At)
+        return new User(user.id, user.email, user.name, undefined, undefined, createdUser.raw[0].created_At, createdUser.raw[0].updated_At)
     }
 
     async getUserByEmail(email: string) {
@@ -27,7 +26,7 @@ export class UserRepository {
             .where("user.email = :email", { email: email })
             .getOne()
 
-        const user = new User(userFromDB?.id || "", userFromDB?.email || "", userFromDB?.name || "", userFromDB?.password, userFromDB?.createdAt, userFromDB?.updatedAt )
+        const user = new User(userFromDB?.id || "", userFromDB?.email || "", userFromDB?.name || "", userFromDB?.password, userFromDB?.salt, userFromDB?.createdAt, userFromDB?.updatedAt )
 
         return user
     }
