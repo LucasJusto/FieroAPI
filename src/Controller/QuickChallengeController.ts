@@ -36,6 +36,15 @@ export class QuickChallengeController {
             
         }
     }
+
+    async getUserQuickChallengesById(req: Request, res: Response) {
+        try {
+            const quickChallenges = await quickChallengeService.getUserQuickChallengesById(req.body.userId)
+            res.status(HTTPCodes.Created).json({ quickChallenges: quickChallenges })
+        } catch(error) {
+            res.status(HTTPCodes.InternalServerError).json({ error: error })
+        }
+    }
 }
 
 export enum QuickChallengeTypes {

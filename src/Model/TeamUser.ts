@@ -7,7 +7,7 @@ export class TeamUser {
     @PrimaryColumn({ type: 'uuid' })
     id: string
 
-    @ManyToOne(() => User, { eager: true })
+    @ManyToOne(() => User)
     @JoinColumn({ name: 'user_id' })
     user: User;
 

@@ -51,4 +51,13 @@ router.post('/quickChallenge/create',[
     }
 )
 
+router.get('/quickChallenge/createdByMe',[ 
+    authToken(), validate([
+        body('userId').isString().notEmpty()
+    ])],
+    async (req: Request, res: Response) => {
+        quickChallengeController.getUserQuickChallengesById(req, res)
+    }
+)
+
 export default router
