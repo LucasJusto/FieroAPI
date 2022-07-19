@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryColumn, UpdateDateColumn, CreateDateColumn, OneToMany } from "typeorm"
+import { Entity, Column, PrimaryColumn, UpdateDateColumn, CreateDateColumn, OneToMany, JoinColumn, ManyToOne } from "typeorm"
 import { Team } from "./Team.js"
+import { User } from "./User.js"
 
 @Entity()
 export class QuickChallenge {
@@ -11,6 +12,13 @@ export class QuickChallenge {
 
     @Column({ nullable: false, unique: true, type: 'uuid' })
     invitationCode: string
+
+    @ManyToOne(() => User, { eager: true })
+    @JoinColumn({ name: 'owner_id' })
+    owner: User
+
+    @Column({ name: 'owner_id', nullable: false, type: 'uuid' })
+    ownerId: string
 
     @Column({ nullable: false, type: 'varchar' })
     type: string
@@ -33,7 +41,7 @@ export class QuickChallenge {
     @UpdateDateColumn({ name: "updated_At" })
     updatedAt: Date
 
-    constructor(id: string, name: string, invitationCode: string, type: string, goal: number, goalMeasure: string, finished: boolean, createdAt?: Date, updatedAt?: Date) {
+    constructor(id: string, name: string, invitationCode: string, type: string, goal: number, goalMeasure: string, finished: boolean, ownerId: string, owner?: User, teams?: Team[], createdAt?: Date, updatedAt?: Date) {
         this.id = id
         this.name = name
         this.invitationCode = invitationCode
@@ -41,6 +49,14 @@ export class QuickChallenge {
         this.goal = goal
         this.goalMeasure = goalMeasure
         this.finished = finished
+        this.ownerId = ownerId
+
+        if(teams) {
+            this.teams = teams
+        }
+        if(owner) {
+            this.owner = owner
+        }
         if(createdAt) {
             this.createdAt = createdAt
         }

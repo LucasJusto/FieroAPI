@@ -4,22 +4,16 @@ import { createQueryBuilder, EntityRepository, getCustomRepository, Repository} 
 
 
 export class UserRepository {
-    userRep = getCustomRepository(TORMUserRepository)
 
     async insert(user: User) {
-        const createdUser = await this.userRep
-            .createQueryBuilder()
-            .insert()
-            .into(User)
-            .values([
-                { id: user.id, email: user.email, name: user.name, password: user.password, salt: user.salt }
-            ])
-            .execute()
-        return new User(user.id, user.email, user.name, undefined, undefined, createdUser.raw[0].created_At, createdUser.raw[0].updated_At)
+        const userRep = getCustomRepository(TORMUserRepository)
+        const createdUser = await userRep.save(user)
+        return new User(createdUser.id, createdUser.email, createdUser.name, undefined, undefined, createdUser.createdAt, createdUser.updatedAt)
     }
 
     async getUserByEmail(email: string) {
-        const userFromDB = await this.userRep
+        const userRep = getCustomRepository(TORMUserRepository)
+        const userFromDB = await userRep
             .createQueryBuilder()
             .select("user")
             .from(User, "user")
@@ -27,6 +21,20 @@ export class UserRepository {
             .getOne()
 
         const user = new User(userFromDB?.id || "", userFromDB?.email || "", userFromDB?.name || "", userFromDB?.password, userFromDB?.salt, userFromDB?.createdAt, userFromDB?.updatedAt )
+
+        return user
+    }
+
+    async getUserById(id: string) {
+        const userRep = getCustomRepository(TORMUserRepository)
+        const userFromDB = await userRep
+            .createQueryBuilder()
+            .select("user")
+            .from(User, "user")
+            .where("user.id = :id", { id: id })
+            .getOne()
+
+        const user = new User(userFromDB?.id || "", userFromDB?.email || "", userFromDB?.name || "", undefined, undefined, userFromDB?.createdAt, userFromDB?.updatedAt )
 
         return user
     }
