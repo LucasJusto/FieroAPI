@@ -7,7 +7,6 @@ import express from 'express'
 export const authToken = () => {
     return async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         const token = req.get('authToken')
-        console.log('pf')
         if (!token) {
             res.status(HTTPCodes.BadRequest).json({ message: "No authentication token was found at header. Please include it with the key authToken" })
             return
@@ -20,7 +19,6 @@ export const authToken = () => {
                 }
                 else {
                     req.body.userId = decoded.id
-                    console.log(req.body.userId)
                     return next()  
                 }
             })
