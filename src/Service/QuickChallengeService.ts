@@ -15,4 +15,8 @@ export class QuickChallengeService {
         const teamUser = new TeamUser(uuidV4(), owner, team, 0)
         return await quickChallengeRepository.insert(quickChallenge, team, teamUser)
     }
+
+    async getUserQuickChallengesById(userId: string) {
+        return await quickChallengeRepository.getUserQuickChallengesById(userId)
+    }
 }

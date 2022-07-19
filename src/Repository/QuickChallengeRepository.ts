@@ -19,6 +19,14 @@ export class QuickChallengeRepository {
 
         return new QuickChallenge(createdQuickChallenge.id, createdQuickChallenge.name, createdQuickChallenge.invitationCode, createdQuickChallenge.type, createdQuickChallenge.goal, createdQuickChallenge.goalMeasure, createdQuickChallenge.finished, createdQuickChallenge.ownerId, undefined, [newTeam])
     }
+
+    async getUserQuickChallengesById(userId: string) {
+        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+
+        const quickChallenges = quickChallengeRep.find({relations: ["teams", "teams.members"], where: {ownerId: userId}})
+
+        return quickChallenges
+    }
 }
 
 @EntityRepository(QuickChallenge)

@@ -25,8 +25,8 @@ export class Team {
     @Column({ name: 'owner_id', nullable: false, type: 'uuid' })
     ownerId: string
 
-    @OneToMany(() => TeamUser, teamUser => teamUser.user)
-    @JoinColumn({ name: 'user_id' })
+    @OneToMany(() => TeamUser, teamUser => teamUser.team)
+    @JoinColumn({ name: 'team_id' })
     members: TeamUser[]
 
     @CreateDateColumn({ name: "created_At" })

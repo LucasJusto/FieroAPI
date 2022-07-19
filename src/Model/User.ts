@@ -11,10 +11,10 @@ export class User {
     @Column({ nullable: false, unique: true, type: 'varchar' })
     email: string
 
-    @Column({ nullable: false, type: 'varchar' })
+    @Column({ nullable: false, type: 'varchar', select: false })
     password: string
 
-    @Column({ nullable: false, type: 'varchar' })
+    @Column({ nullable: false, type: 'varchar', select: false })
     salt: string
 
     @CreateDateColumn({ name: "created_At" })
