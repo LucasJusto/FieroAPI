@@ -5,9 +5,10 @@ import variables from '../config/EnviromentVariables.js'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 
+const userRepository = new UserRepository()
+
 export class UserService {
     async createAccount(user: User) {
-        const userRepository = new UserRepository()
         const salt = await bcrypt.genSalt()
         const encryptedPassword = crypto.createHash('md5').update(user.password+salt).digest('hex')
         const userToCreate = new User(user.id, user.email, user.name, encryptedPassword, salt)
@@ -16,8 +17,6 @@ export class UserService {
     }
 
     async getUserAuthToken(email: string, password: string) {
-        const userRepository = new UserRepository()
-
         const user = await userRepository.getUserByEmail(email)
         if(user.email == email) {
             const encryptedPassword = crypto.createHash('md5').update(password+user.salt).digest('hex')

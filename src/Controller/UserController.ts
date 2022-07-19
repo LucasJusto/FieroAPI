@@ -13,7 +13,7 @@ export class UserController {
 
         try {
             const userWithoutPassword = await userService.createAccount(user)
-            res.status(HTTPCodes.Success).json({ user: userWithoutPassword })
+            res.status(HTTPCodes.Created).json({ user: userWithoutPassword })
 
         } catch (error) {
             switch (error.code) {
