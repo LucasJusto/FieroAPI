@@ -38,14 +38,14 @@ router.post('/user/login',
 
 
 //QUICK CHALLENGE ROUTES
-router.post('/quickChallenge/create', 
-    validate([
+router.post('/quickChallenge/create',[ 
+    authToken(), validate([
         body('name').isString().notEmpty(),
         body('type').isString().notEmpty(),
         body('goal').isNumeric(),
         body('goalMeasure').isString().notEmpty(),
         body('userId').isString().notEmpty()
-    ]),
+    ])],
     async (req: Request, res: Response) => {
         quickChallengeController.createChallenge(req, res)
     }

@@ -14,12 +14,12 @@ export const authToken = () => {
         }
         else {
             const secretKey = variables.USER_AUTH_TOKEN_KEY as string
-            jwt.verify(token, secretKey, (error, decoded) => {
+            jwt.verify(token, secretKey, (error, decoded: any) => {
                 if(error) {
                     res.status(HTTPCodes.Unauthorized).json({ message: "invalid token" })
                 }
                 else {
-                    req.body.userId = decoded
+                    req.body.userId = decoded.id
                     console.log(req.body.userId)
                     return next()  
                 }
