@@ -11,7 +11,7 @@ export class Team {
     @Column({ nullable: false, type: 'varchar' })
     name: string
 
-    @ManyToOne(() => QuickChallenge)
+    @ManyToOne(() => QuickChallenge, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     @JoinColumn({ name: 'quickChallenge_id' })
     quickChallenge: QuickChallenge
 
@@ -25,7 +25,7 @@ export class Team {
     @Column({ name: 'owner_id', nullable: false, type: 'uuid' })
     ownerId: string
 
-    @OneToMany(() => TeamUser, teamUser => teamUser.team)
+    @OneToMany(() => TeamUser, teamUser => teamUser.team, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
     @JoinColumn({ name: 'team_id' })
     members: TeamUser[]
 

@@ -32,7 +32,7 @@ export class QuickChallenge {
     @Column({ nullable: false, type: 'boolean' })
     finished: boolean
 
-    @OneToMany(() => Team, (team) => team.quickChallenge)
+    @OneToMany(() => Team, (team) => team.quickChallenge, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
     teams: Team[]
 
     @CreateDateColumn({ name: "created_At" })

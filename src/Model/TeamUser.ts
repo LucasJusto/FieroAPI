@@ -7,14 +7,14 @@ export class TeamUser {
     @PrimaryColumn({ type: 'uuid' })
     id: string
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
     @JoinColumn({ name: 'user_id' })
     user: User;
 
     @Column({ name: 'user_id', nullable: false, type: 'uuid' })
     userId: string
   
-    @ManyToOne(() => Team, { eager: true })
+    @ManyToOne(() => Team, { eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE'})
     @JoinColumn({ name: 'team_id' })
     team: Team;
 

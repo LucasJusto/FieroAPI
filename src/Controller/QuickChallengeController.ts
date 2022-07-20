@@ -45,6 +45,34 @@ export class QuickChallengeController {
             res.status(HTTPCodes.InternalServerError).json({ error: error })
         }
     }
+
+    async deleteQuickChallenge(req: Request, res: Response) {
+        try {
+            const quickChallengeToDelete = await quickChallengeService.getQuickChallengeById(req.params.id)
+            if (quickChallengeToDelete) {
+                if (quickChallengeToDelete.ownerId === req.body.userId) {
+                    try {
+                        await quickChallengeService.deleteQuickChallenge(quickChallengeToDelete)
+                        res.status(HTTPCodes.Success).json({ message: 'successfully deleted.' })
+                    } catch(error) {
+                        res.status(HTTPCodes.InternalServerError).json({ error: error })
+                        return
+                    }
+                }
+                else {
+                    res.status(HTTPCodes.Forbidden).json({ error: 'this user cant delete this challenge because he is not the owner.' })
+                    return
+                }
+            }
+            else {
+                res.status(HTTPCodes.NotFound).json({ error: 'quick challenge not found' })
+                return
+            }
+        }
+        catch(error) {
+            res.status(HTTPCodes.InternalServerError).json({ error: error })
+        }
+    }
 }
 
 export enum QuickChallengeTypes {

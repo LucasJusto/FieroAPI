@@ -1,5 +1,5 @@
 import { User } from '../Model/User.js'
-import { createQueryBuilder, EntityRepository, getCustomRepository, Repository} from 'typeorm'
+import { createQueryBuilder, EntityRepository, getCustomRepository, In, Repository} from 'typeorm'
 import { QuickChallenge } from '../Model/QuickChallenge.js'
 import { Team } from '../Model/Team.js'
 import { TeamUser } from '../Model/TeamUser.js'
@@ -23,9 +23,31 @@ export class QuickChallengeRepository {
     async getUserQuickChallengesById(userId: string) {
         const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
 
-        const quickChallenges = quickChallengeRep.find({relations: ["teams", "teams.members"], where: {ownerId: userId}})
+        const quickChallenges = await quickChallengeRep.find({relations: ["teams", "teams.members"], where: {ownerId: userId}})
 
         return quickChallenges
+    }
+
+    async getQuickChallengeById(id: string) {
+        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+
+        const quickChallenge = await quickChallengeRep.findOne({where: {id: id}})
+
+        return quickChallenge
+    }
+
+    async deleteQuickChallenge(quickChallengeToDelete: QuickChallenge) {
+        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+        
+        await quickChallengeRep.remove(quickChallengeToDelete)
+    }
+
+    async getTeamsFromQuickChallengeById(id: string) {
+        const teamRep = getCustomRepository(TORMTeamRepository)
+
+        const teams = await teamRep.find({where: {challengeId: id}})
+
+        return teams
     }
 }
 

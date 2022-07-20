@@ -60,4 +60,13 @@ router.get('/quickChallenge/createdByMe',[
     }
 )
 
+router.delete('/quickChallenge/:id',[ 
+    authToken(), validate([
+        body('userId').isString().notEmpty()
+    ])],
+    async (req: Request, res: Response) => {
+        quickChallengeController.deleteQuickChallenge(req, res)
+    }
+)
+
 export default router
