@@ -19,4 +19,12 @@ export class QuickChallengeService {
     async getUserQuickChallengesById(userId: string) {
         return await quickChallengeRepository.getUserQuickChallengesById(userId)
     }
+
+    async getQuickChallengeById(id: string) {
+        return await quickChallengeRepository.getQuickChallengeById(id)
+    }
+
+    async deleteQuickChallenge(quickChallengeToDelete: QuickChallenge) {
+        return await quickChallengeRepository.deleteQuickChallenge(quickChallengeToDelete)
+    }
 }
