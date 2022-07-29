@@ -10,8 +10,8 @@ export default {
   username: DB_USERNAME,
   password: DB_PASSWORD,
   logging: false,
-  entities: ["src/Model/*.ts"],
-  migrations: ["src/database/migrations/*.ts"],
+  entities: ["**/Model/*.{ts,js}"],
+  migrations: ["**/database/migrations/*.{ts,js}"],
   cli: {
     migrationsDir: "src/database/migrations",
   },
