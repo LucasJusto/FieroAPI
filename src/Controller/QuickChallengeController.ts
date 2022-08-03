@@ -3,26 +3,27 @@ import { HTTPCodes } from '../utils/HTTPEnum.js'
 import { Request, Response } from 'express'
 import { QuickChallenge } from '../Model/QuickChallenge.js'
 import { QuickChallengeService } from '../Service/QuickChallengeService.js'
+import { InsertValuesMissingError } from 'typeorm'
 
 const quickChallengeService = new QuickChallengeService()
 
 export class QuickChallengeController {
     async createChallenge(req: Request, res: Response) {
         const { name, type, goal, goalMeasure, userId } = req.body
-        if (!Object.keys(QuickChallengeTypes).includes(type)) {
-            res.status(HTTPCodes.BadRequest).json({ message: 'invalid quick challenge type', validTypes: Object.keys(QuickChallengeTypes) })
+        if (!Object.values(QuickChallengeTypes).includes(type)) {
+            res.status(HTTPCodes.BadRequest).json({ message: 'invalid quick challenge type', validTypes: Object.values(QuickChallengeTypes) })
             return
         }
         else if (type === QuickChallengeTypes.bestof && (!Object.values(QuickChallengeBestofGoals).includes(goal) || !Object.values(QuickChallengeBestofMeasures).includes(goalMeasure))) {
-            res.status(HTTPCodes.BadRequest).json({ message: 'invalid goal or goalMeasure for bestof type', validGoals: Object.keys(QuickChallengeBestofGoals), validMeasures: Object.keys(QuickChallengeBestofMeasures) })
+            res.status(HTTPCodes.BadRequest).json({ message: 'invalid goal or goalMeasure for bestof type', validGoals: Object.values(QuickChallengeBestofGoals).filter(value => typeof(value)=='number'), validMeasures: Object.values(QuickChallengeBestofMeasures) })
             return
         }
-        else if (type === QuickChallengeTypes.quickest && !Object.keys(QuickChallengeQuickestMeasures).includes(goalMeasure)) {
-            res.status(HTTPCodes.BadRequest).json({ message: 'invalid goalMeasure for quickest type', validMeasures: Object.keys(QuickChallengeQuickestMeasures) })
+        else if (type === QuickChallengeTypes.amount && !Object.values(QuickChallengeAmountMeasures).includes(goalMeasure)) {
+            res.status(HTTPCodes.BadRequest).json({ message: 'invalid goalMeasure for Amount type', validMeasures: Object.values(QuickChallengeAmountMeasures) })
             return
         }
-        else if (type === QuickChallengeTypes.highest && !Object.values(QuickChallengeHighestMeasures).includes(goalMeasure)) {
-            res.status(HTTPCodes.BadRequest).json({ message: 'invalid goalMeasure for highest type', validMeasures: Object.keys(QuickChallengeHighestMeasures) })
+        else if (type === QuickChallengeTypes.byTime && !Object.values(QuickChallengeByTimeMeasures).includes(goalMeasure)) {
+            res.status(HTTPCodes.BadRequest).json({ message: 'invalid goalMeasure for ByTime type', validMeasures: Object.values(QuickChallengeByTimeMeasures) })
             return
         }
         else {
@@ -76,16 +77,16 @@ export class QuickChallengeController {
 }
 
 export enum QuickChallengeTypes {
-    quickest = 'quickest',
-    highest = 'highest',
+    amount = 'amount',
+    byTime = 'byTime',
     bestof = 'bestof'
 }
 
-export enum QuickChallengeQuickestMeasures {
+export enum QuickChallengeAmountMeasures {
     unity = 'unity'
 }
 
-export enum QuickChallengeHighestMeasures {
+export enum QuickChallengeByTimeMeasures {
     minutes = 'minutes',
     seconds = 'seconds'
 }
