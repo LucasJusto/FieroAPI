@@ -11,10 +11,10 @@ export class TeamUser {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    @Column({ name: 'user_id', nullable: false, type: 'uuid' })
+    @Column({ name: 'user_id', nullable: true, type: 'uuid' })
     userId: string
   
-    @ManyToOne(() => Team, { eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+    @ManyToOne(() => Team, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     @JoinColumn({ name: 'team_id' })
     team: Team;
 
@@ -24,22 +24,37 @@ export class TeamUser {
     @Column({ nullable: false, type: 'float' })
     score: number
 
+    @Column({ nullable: true, type: 'timestamp'})
+    beginDate: Date
+
+    @Column({ nullable: true, type: 'varchar'})
+    botPicture: string
+
     @CreateDateColumn({ name: "created_At" })
     createdAt: Date
 
     @UpdateDateColumn({ name: "updated_At" })
     updatedAt: Date
 
-    constructor(id: string, user: User, team: Team, score: number, createdAt?: Date, updatedAt?: Date) {
+    constructor(id: string, team: Team, score: number, user?: User, beginDate?: Date, createdAt?: Date, updatedAt?: Date, botPicture?: string) {
         this.id = id
-        this.user = user
         this.team = team
         this.score = score
+
+        if(botPicture) {
+            this.botPicture = botPicture
+        }
+        if(user) {
+            this.user = user
+        }
         if(createdAt) {
             this.createdAt = createdAt
         }
         if(updatedAt) {
             this.updatedAt = updatedAt
+        }
+        if(beginDate) {
+            this.beginDate = beginDate
         }
     }
 }

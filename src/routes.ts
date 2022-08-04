@@ -42,9 +42,11 @@ router.post('/quickChallenge/create',[
     authToken(), validate([
         body('name').isString().notEmpty(),
         body('type').isString().notEmpty(),
-        body('goal').isNumeric(),
+        body('goal').isNumeric().notEmpty(),
         body('goalMeasure').isString().notEmpty(),
-        body('userId').isString().notEmpty()
+        body('userId').isString().notEmpty(),
+        body('online').isBoolean().notEmpty(),
+        body('maxTeams').isNumeric().notEmpty()
     ])],
     async (req: Request, res: Response) => {
         quickChallengeController.createChallenge(req, res)

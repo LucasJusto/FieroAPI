@@ -32,8 +32,17 @@ export class QuickChallenge {
     @Column({ nullable: false, type: 'boolean' })
     finished: boolean
 
-    @OneToMany(() => Team, (team) => team.quickChallenge, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+    @OneToMany(() => Team, (team) => team.quickChallenge, {onDelete: 'CASCADE', onUpdate: 'CASCADE', eager: true})
     teams: Team[]
+
+    @Column({ nullable: false, type: 'boolean', default: false })
+    online: boolean
+
+    @Column({ nullable: false, type: 'boolean', default: false })
+    alreadyBegin: boolean
+
+    @Column({ nullable: false, type: 'integer', default: 4 })
+    maxTeams: number
 
     @CreateDateColumn({ name: "created_At" })
     createdAt: Date
@@ -41,7 +50,7 @@ export class QuickChallenge {
     @UpdateDateColumn({ name: "updated_At" })
     updatedAt: Date
 
-    constructor(id: string, name: string, invitationCode: string, type: string, goal: number, goalMeasure: string, finished: boolean, ownerId: string, owner?: User, teams?: Team[], createdAt?: Date, updatedAt?: Date) {
+    constructor(id: string, name: string, invitationCode: string, type: string, goal: number, goalMeasure: string, finished: boolean, ownerId: string, online: boolean, alreadyBegin: boolean, maxTeams: number, owner?: User, teams?: Team[], createdAt?: Date, updatedAt?: Date) {
         this.id = id
         this.name = name
         this.invitationCode = invitationCode
@@ -50,6 +59,9 @@ export class QuickChallenge {
         this.goalMeasure = goalMeasure
         this.finished = finished
         this.ownerId = ownerId
+        this.online = online
+        this.alreadyBegin = alreadyBegin
+        this.maxTeams = maxTeams
 
         if(teams) {
             this.teams = teams
