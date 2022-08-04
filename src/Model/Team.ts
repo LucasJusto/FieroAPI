@@ -18,14 +18,14 @@ export class Team {
     @Column({ name: 'quickChallenge_id', nullable: false, type: 'uuid' })
     quickChallengeId: string
 
-    @ManyToOne(() => User, { eager: true })
+    @ManyToOne(() => User)
     @JoinColumn({ name: 'owner_id' })
     owner: User
 
-    @Column({ name: 'owner_id', nullable: false, type: 'uuid' })
+    @Column({ name: 'owner_id', nullable: true, type: 'uuid' })
     ownerId: string
 
-    @OneToMany(() => TeamUser, teamUser => teamUser.team, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+    @OneToMany(() => TeamUser, teamUser => teamUser.team, {onDelete: 'CASCADE', onUpdate: 'CASCADE', eager: true})
     @JoinColumn({ name: 'team_id' })
     members: TeamUser[]
 
@@ -35,12 +35,14 @@ export class Team {
     @UpdateDateColumn({ name: "updated_At" })
     updatedAt: Date
 
-    constructor(id: string, name: string, quickChallengeId: string, owner: User, members?: TeamUser[], createdAt?: Date, updatedAt?: Date) {
+    constructor(id: string, name: string, quickChallengeId: string, owner?: User, members?: TeamUser[], createdAt?: Date, updatedAt?: Date) {
         this.id = id
         this.name = name
-        this.owner = owner
         this.quickChallengeId = quickChallengeId
 
+        if(owner) {
+            this.owner = owner
+        }
         if(members) {
             this.members = members
         }

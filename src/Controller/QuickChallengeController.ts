@@ -4,12 +4,18 @@ import { Request, Response } from 'express'
 import { QuickChallenge } from '../Model/QuickChallenge.js'
 import { QuickChallengeService } from '../Service/QuickChallengeService.js'
 import { InsertValuesMissingError } from 'typeorm'
+import { body } from 'express-validator'
 
 const quickChallengeService = new QuickChallengeService()
+const maxMaxTeams = 4
 
 export class QuickChallengeController {
     async createChallenge(req: Request, res: Response) {
-        const { name, type, goal, goalMeasure, userId } = req.body
+        const { name, type, goal, goalMeasure, userId, online, maxTeams } = req.body
+        if (maxTeams > maxMaxTeams) {
+            res.status(HTTPCodes.BadRequest).json({ message: 'Invalid maxTeams value. It cant exceed ' + maxMaxTeams + '.' })
+            return
+        }
         if (!Object.values(QuickChallengeTypes).includes(type)) {
             res.status(HTTPCodes.BadRequest).json({ message: 'invalid quick challenge type', validTypes: Object.values(QuickChallengeTypes) })
             return
@@ -27,12 +33,36 @@ export class QuickChallengeController {
             return
         }
         else {
-            const quickChallenge = new QuickChallenge(uuidV4(), name, uuidV4(), type, goal, goalMeasure, false, userId)
+            const quickChallenge = new QuickChallenge(uuidV4(), name, uuidV4(), type, goal, goalMeasure, false, userId, online, false, maxTeams)
             try {
-                const createdQuickChallenge = await quickChallengeService.createQuickChallenge(quickChallenge)
-                res.status(HTTPCodes.Created).json({ quickChallenge: createdQuickChallenge })
+                if(online === false) {
+                    const numberOfTeams = req.body['numberOfTeams']
+                    if (numberOfTeams) {
+                        if(Object.values(QuickChallengePossibleNumberOfTeams).filter(value => typeof(value)=='number').includes(numberOfTeams)) {
+                            const createdQuickChallenge = await quickChallengeService.createQuickChallenge(quickChallenge, numberOfTeams)
+                            res.status(HTTPCodes.Created).json({ quickChallenge: createdQuickChallenge })
+                            return
+                        }
+                        else {
+                            res.status(HTTPCodes.BadRequest).json({ message: 'Invalid numberOfTeams', validNumberOfTeams:  Object.values(QuickChallengePossibleNumberOfTeams).filter(value => typeof(value)=='number')})
+                            return
+                        }
+                        
+                    }
+                    else {
+                        res.status(HTTPCodes.BadRequest).json({ message: 'Offline challenges need to send the paramater numberOfTeams at body.' })
+                        return
+                    }
+                }
+                else {
+                    const createdQuickChallenge = await quickChallengeService.createQuickChallenge(quickChallenge, 1)
+                    res.status(HTTPCodes.Created).json({ quickChallenge: createdQuickChallenge })
+                    return
+                }
+                
             } catch(error) {
                 res.status(HTTPCodes.InternalServerError).json({ error: error })
+                return
             }
             
         }
@@ -98,4 +128,9 @@ export enum QuickChallengeBestofMeasures {
 export enum QuickChallengeBestofGoals {
     five = 5,
     three = 3
+}
+
+export enum QuickChallengePossibleNumberOfTeams {
+    three = 3,
+    four = 4
 }

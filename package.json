@@ -11,7 +11,7 @@
     "docker": "docker-compose up -d",
     "migrationsRun": "npm run typeorm -- migration:run",
     "migrationsRevert": "npm run typeorm -- migration:revert",
-    "migrationsGenerate": "npm run teypeorm -- migration:generate"
+    "migrationsGenerate": "npm run typeorm -- migration:generate"
   },
   "repository": {
     "type": "git",

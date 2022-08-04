@@ -7,17 +7,18 @@ import { TeamUser } from '../Model/TeamUser.js'
 
 
 export class QuickChallengeRepository {
-    async insert(quickChallenge: QuickChallenge, team: Team, teamUser: TeamUser) {
+    async insert(quickChallenge: QuickChallenge, teams: Team[], teamsUsers: TeamUser[]) {
         const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
         const teamRep = getCustomRepository(TORMTeamRepository)
         const teamUserRep = getCustomRepository(TORMTeamUserRepository)
 
-        const createdQuickChallenge = await quickChallengeRep.save(quickChallenge)
-        const createdTeam = await teamRep.save(team)
-        const createdTeamUser = await teamUserRep.save(teamUser)
-        const newTeam = new Team(createdTeam.id, createdTeam.name, createdTeam.quickChallengeId, createdTeam.owner, [createdTeamUser])
+        await quickChallengeRep.save(quickChallenge)
+        await teamRep.save(teams)
+        await teamUserRep.save(teamsUsers)
+        const createdQuickChallenge = await quickChallengeRep.findByIds([quickChallenge.id])
 
-        return new QuickChallenge(createdQuickChallenge.id, createdQuickChallenge.name, createdQuickChallenge.invitationCode, createdQuickChallenge.type, createdQuickChallenge.goal, createdQuickChallenge.goalMeasure, createdQuickChallenge.finished, createdQuickChallenge.ownerId, undefined, [newTeam])
+        //return new QuickChallenge(createdQuickChallenge.id, createdQuickChallenge.name, createdQuickChallenge.invitationCode, createdQuickChallenge.type, createdQuickChallenge.goal, createdQuickChallenge.goalMeasure, createdQuickChallenge.finished, createdQuickChallenge.ownerId, createdQuickChallenge.online, createdQuickChallenge.alreadyBegin, createdQuickChallenge.maxTeams, undefined, createdTeams)
+        return createdQuickChallenge
     }
 
     async getUserQuickChallengesById(userId: string) {
