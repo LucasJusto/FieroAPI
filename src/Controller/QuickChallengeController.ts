@@ -38,6 +38,10 @@ export class QuickChallengeController {
                 if(online === false) {
                     const numberOfTeams = req.body['numberOfTeams']
                     if (numberOfTeams) {
+                        if(numberOfTeams > maxTeams) {
+                            res.status(HTTPCodes.BadRequest).json({ message: 'numberOfTeams cant be higher than maxTeams.' })
+                            return
+                        }
                         if(Object.values(QuickChallengePossibleNumberOfTeams).filter(value => typeof(value)=='number').includes(numberOfTeams)) {
                             const createdQuickChallenge = await quickChallengeService.createQuickChallenge(quickChallenge, numberOfTeams)
                             res.status(HTTPCodes.Created).json({ quickChallenge: createdQuickChallenge })
