@@ -119,8 +119,9 @@ export class QuickChallengeController {
             const teamUser = await quickChallengeRepository.getTeamUserById(teamMemberId)
             const team = await quickChallengeRepository.getTeamById(teamId)
             const challenge = await quickChallengeRepository.getQuickChallengeById(quickChallengeId)
-
+            //the member to be updated needs to exist.
             if (teamUser) {
+                //if the member has an userId, it is a real player. Else it is from someone without account in the offline mode.
                 if (teamUser.userId) {
                     if (userId !== teamUser.userId) {
                         res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant write in this area' })
@@ -129,6 +130,7 @@ export class QuickChallengeController {
                 }
                 else {
                     if (team) {
+                        //if it is without userId, we need to check at least if it is coming from the device of the challenge owner.
                         if (challenge?.ownerId !== userId) {
                             res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant write in this area' })
                             return

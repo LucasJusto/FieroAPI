@@ -71,6 +71,7 @@ router.delete('/quickChallenge/:id',[
     }
 )
 
+//need the 3 ids for the offline mode, where the member wont have userId, then we need to check if the authToken has the UserId from the Challenge.ownerId.
 router.patch('/quickChallenge/:quickChallengeId/team/:teamId/member/:teamMemberId/score',[ 
     authToken(), validate([
         body('score').isNumeric().notEmpty(),
