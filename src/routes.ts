@@ -71,4 +71,16 @@ router.delete('/quickChallenge/:id',[
     }
 )
 
+router.patch('/quickChallenge/:quickChallengeId/team/:teamId/member/:teamMemberId/score',[ 
+    authToken(), validate([
+        body('score').isNumeric().notEmpty(),
+        param('quickChallengeId').isString().notEmpty(),
+        param('teamId').isString().notEmpty(),
+        param('teamMemberId').isString().notEmpty()
+    ])],
+    async (req: Request, res: Response) => {
+        quickChallengeController.patchScore(req, res)
+    }
+)
+
 export default router

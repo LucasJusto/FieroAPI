@@ -50,6 +50,35 @@ export class QuickChallengeRepository {
 
         return teams
     }
+
+    async getTeamUserById(id: string) {
+        const teamUserRep = getCustomRepository(TORMTeamUserRepository)
+
+        const teamUser = await teamUserRep.findOne({where: {id: id}})
+
+        return teamUser
+    }
+
+    async getTeamById(id: string) {
+        const teamRep = getCustomRepository(TORMTeamRepository)
+
+        const team = await teamRep.findOne({where: {id: id}})
+
+        return team
+    }
+
+    async updateTeamUser(teamUser: TeamUser) {
+        const teamUserRep = getCustomRepository(TORMTeamUserRepository)
+
+        await teamUserRep.update({
+            id: teamUser.id
+        },{
+            score: teamUser.score
+        })
+
+        const updatedTeamUser = this.getTeamUserById(teamUser.id)
+        return updatedTeamUser
+    }
 }
 
 @EntityRepository(QuickChallenge)

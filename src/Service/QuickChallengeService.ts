@@ -47,4 +47,9 @@ export class QuickChallengeService {
     async deleteQuickChallenge(quickChallengeToDelete: QuickChallenge) {
         return await quickChallengeRepository.deleteQuickChallenge(quickChallengeToDelete)
     }
+
+    async patchScore(score: number, teamUser: TeamUser) {
+        teamUser.score = score
+        return await quickChallengeRepository.updateTeamUser(teamUser)
+    }
 }

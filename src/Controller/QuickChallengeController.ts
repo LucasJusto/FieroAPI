@@ -5,8 +5,10 @@ import { QuickChallenge } from '../Model/QuickChallenge.js'
 import { QuickChallengeService } from '../Service/QuickChallengeService.js'
 import { InsertValuesMissingError } from 'typeorm'
 import { body } from 'express-validator'
+import { QuickChallengeRepository } from '../Repository/QuickChallengeRepository.js'
 
 const quickChallengeService = new QuickChallengeService()
+const quickChallengeRepository = new QuickChallengeRepository()
 const maxMaxTeams = 4
 
 export class QuickChallengeController {
@@ -105,6 +107,56 @@ export class QuickChallengeController {
             }
         }
         catch(error) {
+            res.status(HTTPCodes.InternalServerError).json({ error: error })
+        }
+    }
+
+    async patchScore(req: Request, res: Response) {
+        try {
+            const { score, userId } = req.body
+            const { quickChallengeId, teamId, teamMemberId } = req.params
+
+            const teamUser = await quickChallengeRepository.getTeamUserById(teamMemberId)
+            const team = await quickChallengeRepository.getTeamById(teamId)
+            const challenge = await quickChallengeRepository.getQuickChallengeById(quickChallengeId)
+
+            if (teamUser) {
+                if (teamUser.userId) {
+                    if (userId !== teamUser.userId) {
+                        res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant write in this area' })
+                        return
+                    }
+                }
+                else {
+                    if (team) {
+                        if (challenge?.ownerId !== userId) {
+                            res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant write in this area' })
+                            return
+                        }
+                        if (team.quickChallengeId !== quickChallengeId) {
+                            res.status(HTTPCodes.BadRequest).json({ message: 'this team isnt from the challenge specified' })
+                            return
+                        }
+                    }
+                    else {
+                        res.status(HTTPCodes.BadRequest).json({ message: 'this team doesnt exist' })
+                        return
+                    }
+                }
+
+                if (teamId !== teamUser.teamId) {
+                    res.status(HTTPCodes.BadRequest).json({ message: 'this team member isnt from the team specified' })
+                    return
+                }
+            }
+            else {
+                res.status(HTTPCodes.BadRequest).json({ message: 'this team member doesnt exist' })
+                return
+            }     
+
+            const member = await quickChallengeService.patchScore(score, teamUser)
+            res.status(HTTPCodes.Success).json({ member: member })
+        } catch(error) {
             res.status(HTTPCodes.InternalServerError).json({ error: error })
         }
     }
