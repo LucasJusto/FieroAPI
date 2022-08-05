@@ -79,6 +79,19 @@ export class QuickChallengeRepository {
         const updatedTeamUser = this.getTeamUserById(teamUser.id)
         return updatedTeamUser
     }
+
+    async updateQuickChallenge(challenge: QuickChallenge) {
+        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+
+        await quickChallengeRep.update({
+            id: challenge.id
+        },{
+            alreadyBegin: challenge.alreadyBegin
+        })
+
+        const updatedQuickChallenge = this.getQuickChallengeById(challenge.id)
+        return updatedQuickChallenge
+    }
 }
 
 @EntityRepository(QuickChallenge)

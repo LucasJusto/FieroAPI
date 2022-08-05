@@ -84,4 +84,15 @@ router.patch('/quickChallenge/:quickChallengeId/team/:teamId/member/:teamMemberI
     }
 )
 
+router.patch('/quickChallenge/:quickChallengeId/alreadyBegin',[ 
+    authToken(), validate([
+        body('alreadyBegin').isBoolean().notEmpty(),
+        param('quickChallengeId').isString().notEmpty()
+    ])],
+    async (req: Request, res: Response) => {
+        quickChallengeController.patchAlreadyBegin(req, res)
+    }
+)
+
+
 export default router

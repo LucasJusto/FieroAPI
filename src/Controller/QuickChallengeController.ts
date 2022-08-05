@@ -162,6 +162,30 @@ export class QuickChallengeController {
             res.status(HTTPCodes.InternalServerError).json({ error: error })
         }
     }
+
+    async patchAlreadyBegin(req: Request, res: Response) {
+        try {
+            const { alreadyBegin, userId } = req.body
+            const quickChallengeId = req.params.quickChallengeId
+
+            const quickChallenge = await quickChallengeRepository.getQuickChallengeById(quickChallengeId)
+            
+            if (quickChallenge) {
+                if (quickChallenge.ownerId !== userId) {
+                    res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant begin this challenge' })
+                    return
+                }
+                const updatedQuickChallenge = await quickChallengeService.patchAlreadyBegin(alreadyBegin, quickChallenge)
+                res.status(HTTPCodes.Success).json({ quickChallenge: updatedQuickChallenge }) 
+                return
+            }
+
+        } catch(error) {
+            res.status(HTTPCodes.InternalServerError).json({ error: error })
+            return
+        }
+    }
+
 }
 
 export enum QuickChallengeTypes {

@@ -52,4 +52,9 @@ export class QuickChallengeService {
         teamUser.score = score
         return await quickChallengeRepository.updateTeamUser(teamUser)
     }
+
+    async patchAlreadyBegin(alreadyBegin: boolean, challenge: QuickChallenge) {
+        challenge.alreadyBegin = alreadyBegin
+        return await quickChallengeRepository.updateQuickChallenge(challenge)
+    }
 }
