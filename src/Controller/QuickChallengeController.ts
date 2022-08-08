@@ -236,6 +236,7 @@ export enum QuickChallengeBestofGoals {
 }
 
 export enum QuickChallengePossibleNumberOfTeams {
+    two = 2,
     three = 3,
     four = 4
 }
