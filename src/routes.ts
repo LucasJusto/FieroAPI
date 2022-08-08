@@ -94,5 +94,15 @@ router.patch('/quickChallenge/:quickChallengeId/alreadyBegin',[
     }
 )
 
+router.patch('/quickChallenge/:quickChallengeId/finished',[ 
+    authToken(), validate([
+        body('finished').isBoolean().notEmpty(),
+        param('quickChallengeId').isString().notEmpty()
+    ])],
+    async (req: Request, res: Response) => {
+        quickChallengeController.patchFinished(req, res)
+    }
+)
+
 
 export default router

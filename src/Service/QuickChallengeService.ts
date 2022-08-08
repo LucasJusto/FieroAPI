@@ -55,6 +55,11 @@ export class QuickChallengeService {
 
     async patchAlreadyBegin(alreadyBegin: boolean, challenge: QuickChallenge) {
         challenge.alreadyBegin = alreadyBegin
-        return await quickChallengeRepository.updateQuickChallenge(challenge)
+        return await quickChallengeRepository.updateAlreadyBeginQuickChallenge(challenge)
+    }
+
+    async patchFinished(finished: boolean, challenge: QuickChallenge) {
+        challenge.finished = finished
+        return await quickChallengeRepository.updateFinishedQuickChallenge(challenge)
     }
 }

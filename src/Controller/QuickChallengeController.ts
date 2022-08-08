@@ -186,6 +186,29 @@ export class QuickChallengeController {
         }
     }
 
+    async patchFinished(req: Request, res: Response) {
+        try {
+            const { finished, userId } = req.body
+            const quickChallengeId = req.params.quickChallengeId
+
+            const quickChallenge = await quickChallengeRepository.getQuickChallengeById(quickChallengeId)
+            
+            if (quickChallenge) {
+                if (quickChallenge.ownerId !== userId) {
+                    res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant finish this challenge' })
+                    return
+                }
+                const updatedQuickChallenge = await quickChallengeService.patchFinished(finished, quickChallenge)
+                res.status(HTTPCodes.Success).json({ quickChallenge: updatedQuickChallenge }) 
+                return
+            }
+
+        } catch(error) {
+            res.status(HTTPCodes.InternalServerError).json({ error: error })
+            return
+        }
+    }
+
 }
 
 export enum QuickChallengeTypes {
