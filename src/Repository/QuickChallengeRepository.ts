@@ -50,6 +50,61 @@ export class QuickChallengeRepository {
 
         return teams
     }
+
+    async getTeamUserById(id: string) {
+        const teamUserRep = getCustomRepository(TORMTeamUserRepository)
+
+        const teamUser = await teamUserRep.findOne({where: {id: id}})
+
+        return teamUser
+    }
+
+    async getTeamById(id: string) {
+        const teamRep = getCustomRepository(TORMTeamRepository)
+
+        const team = await teamRep.findOne({where: {id: id}})
+
+        return team
+    }
+
+    async updateTeamUser(teamUser: TeamUser) {
+        const teamUserRep = getCustomRepository(TORMTeamUserRepository)
+
+        await teamUserRep.update({
+            id: teamUser.id
+        },{
+            score: teamUser.score
+        })
+
+        const updatedTeamUser = this.getTeamUserById(teamUser.id)
+        return updatedTeamUser
+    }
+
+    async updateAlreadyBeginQuickChallenge(challenge: QuickChallenge) {
+        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+
+        await quickChallengeRep.update({
+            id: challenge.id
+        },{
+            alreadyBegin: challenge.alreadyBegin
+        })
+
+        const updatedQuickChallenge = this.getQuickChallengeById(challenge.id)
+        return updatedQuickChallenge
+    }
+
+    async updateFinishedQuickChallenge(challenge: QuickChallenge) {
+        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+
+        await quickChallengeRep.update({
+            id: challenge.id
+        },{
+            finished: challenge.finished
+        })
+
+        const updatedQuickChallenge = this.getQuickChallengeById(challenge.id)
+        return updatedQuickChallenge
+    }
 }
 
 @EntityRepository(QuickChallenge)
