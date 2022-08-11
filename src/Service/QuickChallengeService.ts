@@ -8,7 +8,7 @@ import uuidV4 from '../utils/uuidv4Generator.js'
 const quickChallengeRepository = new QuickChallengeRepository
 const userRepository = new UserRepository()
 
-const possibleBotPictures = ['picture1', 'picture2', 'picture3', 'picture4']
+const possibleBotPictures = ['player1', 'player2', 'player3', 'player4']
 
 export class QuickChallengeService {
     async createQuickChallenge(quickChallenge: QuickChallenge, numberOfTeams: number) {
