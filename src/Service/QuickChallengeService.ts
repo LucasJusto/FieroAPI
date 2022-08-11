@@ -8,7 +8,7 @@ import uuidV4 from '../utils/uuidv4Generator.js'
 const quickChallengeRepository = new QuickChallengeRepository
 const userRepository = new UserRepository()
 
-const possibleBotPictures = ['player1', 'player2', 'player3', 'player4']
+const possibleBotPictures = ['player2', 'player3', 'player4']
 
 export class QuickChallengeService {
     async createQuickChallenge(quickChallenge: QuickChallenge, numberOfTeams: number) {
@@ -25,7 +25,7 @@ export class QuickChallengeService {
             const teamUser = new TeamUser(uuidV4(), team, 0, owner)
             let teams: Team[] = [team]
             let teamsUsers: TeamUser[] = [teamUser]
-            for (let i = 1; i < numberOfTeams; i++) {
+            for (let i = 0; i < numberOfTeams-1; i++) {
                const teamBot = new Team(uuidV4(), possibleBotPictures[i], quickChallenge.id)
                const teamUserBot = new TeamUser(uuidV4(), teamBot, 0, undefined, undefined, undefined, undefined, possibleBotPictures[i])
                teams.push(teamBot)
