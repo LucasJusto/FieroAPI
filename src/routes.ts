@@ -71,4 +71,38 @@ router.delete('/quickChallenge/:id',[
     }
 )
 
+//need the 3 ids for the offline mode, where the member wont have userId, then we need to check if the authToken has the UserId from the Challenge.ownerId.
+router.patch('/quickChallenge/:quickChallengeId/team/:teamId/member/:teamMemberId/score',[ 
+    authToken(), validate([
+        body('score').isNumeric().notEmpty(),
+        param('quickChallengeId').isString().notEmpty(),
+        param('teamId').isString().notEmpty(),
+        param('teamMemberId').isString().notEmpty()
+    ])],
+    async (req: Request, res: Response) => {
+        quickChallengeController.patchScore(req, res)
+    }
+)
+
+router.patch('/quickChallenge/:quickChallengeId/alreadyBegin',[ 
+    authToken(), validate([
+        body('alreadyBegin').isBoolean().notEmpty(),
+        param('quickChallengeId').isString().notEmpty()
+    ])],
+    async (req: Request, res: Response) => {
+        quickChallengeController.patchAlreadyBegin(req, res)
+    }
+)
+
+router.patch('/quickChallenge/:quickChallengeId/finished',[ 
+    authToken(), validate([
+        body('finished').isBoolean().notEmpty(),
+        param('quickChallengeId').isString().notEmpty()
+    ])],
+    async (req: Request, res: Response) => {
+        quickChallengeController.patchFinished(req, res)
+    }
+)
+
+
 export default router
