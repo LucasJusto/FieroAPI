@@ -212,6 +212,10 @@ export class QuickChallengeController {
                     res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant finish this challenge' })
                     return
                 }
+                if (!quickChallenge.alreadyBegin) {
+                    res.status(HTTPCodes.BadRequest).json({ message: 'cant finish a challenge that didnt begin' })
+                    return
+                }
                 const updatedQuickChallenge = await quickChallengeService.patchFinished(finished, quickChallenge)
                 res.status(HTTPCodes.Success).json({ quickChallenge: updatedQuickChallenge }) 
                 return
