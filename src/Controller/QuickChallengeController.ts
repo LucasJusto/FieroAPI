@@ -124,6 +124,10 @@ export class QuickChallengeController {
                     res.status(HTTPCodes.BadRequest).json({ message: 'this challenge didnt begin yet' })
                     return
                 }
+                if(challenge.finished) {
+                    res.status(HTTPCodes.BadRequest).json({ message: 'this challenge already finished' })
+                    return
+                }
             }
             else {
                 res.status(HTTPCodes.BadRequest).json({ message: 'this challenge doesnt exist' })
