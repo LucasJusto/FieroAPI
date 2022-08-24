@@ -119,6 +119,16 @@ export class QuickChallengeController {
             const teamUser = await quickChallengeRepository.getTeamUserById(teamMemberId)
             const team = await quickChallengeRepository.getTeamById(teamId)
             const challenge = await quickChallengeRepository.getQuickChallengeById(quickChallengeId)
+            if(challenge) {
+                if(!challenge.alreadyBegin) {
+                    res.status(HTTPCodes.BadRequest).json({ message: 'this challenge didnt begin yet' })
+                    return
+                }
+            }
+            else {
+                res.status(HTTPCodes.BadRequest).json({ message: 'this challenge doesnt exist' })
+                return
+            }
             //the member to be updated needs to exist.
             if (teamUser) {
                 //if the member has an userId, it is a real player. Else it is from someone without account in the offline mode.
