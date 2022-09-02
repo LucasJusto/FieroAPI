@@ -181,69 +181,70 @@ export class QuickChallengeController {
     }
   }
 
-  async patchScore(req: Request, res: Response) {
-    try {
-      const { score, userId } = req.body;
-      const { quickChallengeId, teamId, teamMemberId } = req.params;
+    async patchScore(req: Request, res: Response) {
+        try {
+            const { score, userId } = req.body
+            const { quickChallengeId, teamId, teamMemberId } = req.params
 
-      const teamUser = await quickChallengeRepository.getTeamUserById(
-        teamMemberId
-      );
-      const team = await quickChallengeRepository.getTeamById(teamId);
-      const challenge = await quickChallengeRepository.getQuickChallengeById(
-        quickChallengeId
-      );
-      //the member to be updated needs to exist.
-      if (teamUser) {
-        //if the member has an userId, it is a real player. Else it is from someone without account in the offline mode.
-        if (teamUser.userId) {
-          if (userId !== teamUser.userId) {
-            res
-              .status(HTTPCodes.Unauthorized)
-              .json({ message: "this user cant write in this area" });
-            return;
-          }
-        } else {
-          if (team) {
-            //if it is without userId, we need to check at least if it is coming from the device of the challenge owner.
-            if (challenge?.ownerId !== userId) {
-              res
-                .status(HTTPCodes.Unauthorized)
-                .json({ message: "this user cant write in this area" });
-              return;
+            const teamUser = await quickChallengeRepository.getTeamUserById(teamMemberId)
+            const team = await quickChallengeRepository.getTeamById(teamId)
+            const challenge = await quickChallengeRepository.getQuickChallengeById(quickChallengeId)
+            if(challenge) {
+                if(!challenge.alreadyBegin) {
+                    res.status(HTTPCodes.BadRequest).json({ message: 'this challenge didnt begin yet' })
+                    return
+                }
+                if(challenge.finished) {
+                    res.status(HTTPCodes.BadRequest).json({ message: 'this challenge already finished' })
+                    return
+                }
             }
-            if (team.quickChallengeId !== quickChallengeId) {
-              res.status(HTTPCodes.BadRequest).json({
-                message: "this team isnt from the challenge specified",
-              });
-              return;
+            else {
+                res.status(HTTPCodes.BadRequest).json({ message: 'this challenge doesnt exist' })
+                return
             }
-          } else {
-            res
-              .status(HTTPCodes.BadRequest)
-              .json({ message: "this team doesnt exist" });
-            return;
-          }
-        }
+            //the member to be updated needs to exist.
+            if (teamUser) {
+                //if the member has an userId, it is a real player. Else it is from someone without account in the offline mode.
+                if (teamUser.userId) {
+                    if (userId !== teamUser.userId) {
+                        res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant write in this area' })
+                        return
+                    }
+                }
+                else {
+                    if (team) {
+                        //if it is without userId, we need to check at least if it is coming from the device of the challenge owner.
+                        if (challenge?.ownerId !== userId) {
+                            res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant write in this area' })
+                            return
+                        }
+                        if (team.quickChallengeId !== quickChallengeId) {
+                            res.status(HTTPCodes.BadRequest).json({ message: 'this team isnt from the challenge specified' })
+                            return
+                        }
+                    }
+                    else {
+                        res.status(HTTPCodes.BadRequest).json({ message: 'this team doesnt exist' })
+                        return
+                    }
+                }
 
-        if (teamId !== teamUser.teamId) {
-          res
-            .status(HTTPCodes.BadRequest)
-            .json({ message: "this team member isnt from the team specified" });
-          return;
-        }
-      } else {
-        res
-          .status(HTTPCodes.BadRequest)
-          .json({ message: "this team member doesnt exist" });
-        return;
-      }
+                if (teamId !== teamUser.teamId) {
+                    res.status(HTTPCodes.BadRequest).json({ message: 'this team member isnt from the team specified' })
+                    return
+                }
+            }
+            else {
+                res.status(HTTPCodes.BadRequest).json({ message: 'this team member doesnt exist' })
+                return
+            }     
 
-      const member = await quickChallengeService.patchScore(score, teamUser);
-      res.status(HTTPCodes.Success).json({ member: member });
-    } catch (error) {
-      res.status(HTTPCodes.InternalServerError).json({ error: error });
-    }
+            const member = await quickChallengeService.patchScore(score, teamUser)
+            res.status(HTTPCodes.Success).json({ member: member })
+        } catch(error) {
+            res.status(HTTPCodes.InternalServerError).json({ error: error })
+        }
   }
 
   async patchAlreadyBegin(req: Request, res: Response) {
@@ -277,13 +278,26 @@ export class QuickChallengeController {
     }
   }
 
-  async patchFinished(req: Request, res: Response) {
-    try {
-      const { finished, userId } = req.body;
-      const quickChallengeId = req.params.quickChallengeId;
+    async patchFinished(req: Request, res: Response) {
+        try {
+            const { finished, userId } = req.body
+            const quickChallengeId = req.params.quickChallengeId
 
-      const quickChallenge =
-        await quickChallengeRepository.getQuickChallengeById(quickChallengeId);
+            const quickChallenge = await quickChallengeRepository.getQuickChallengeById(quickChallengeId)
+            
+            if (quickChallenge) {
+                if (quickChallenge.ownerId !== userId) {
+                    res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant finish this challenge' })
+                    return
+                }
+                if (!quickChallenge.alreadyBegin) {
+                    res.status(HTTPCodes.BadRequest).json({ message: 'cant finish a challenge that didnt begin' })
+                    return
+                }
+                const updatedQuickChallenge = await quickChallengeService.patchFinished(finished, quickChallenge)
+                res.status(HTTPCodes.Success).json({ quickChallenge: updatedQuickChallenge }) 
+                return
+            }
 
       if (quickChallenge) {
         if (quickChallenge.ownerId !== userId) {
