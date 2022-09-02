@@ -1,110 +1,144 @@
-import { User } from '../Model/User.js'
-import { createQueryBuilder, EntityRepository, getCustomRepository, In, Repository} from 'typeorm'
-import { QuickChallenge } from '../Model/QuickChallenge.js'
-import { Team } from '../Model/Team.js'
-import { TeamUser } from '../Model/TeamUser.js'
-
-
+import { User } from "../Model/User.js";
+import {
+  createQueryBuilder,
+  EntityRepository,
+  getCustomRepository,
+  In,
+  Repository,
+} from "typeorm";
+import { QuickChallenge } from "../Model/QuickChallenge.js";
+import { Team } from "../Model/Team.js";
+import { TeamUser } from "../Model/TeamUser.js";
 
 export class QuickChallengeRepository {
-    async insert(quickChallenge: QuickChallenge, teams: Team[], teamsUsers: TeamUser[]) {
-        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
-        const teamRep = getCustomRepository(TORMTeamRepository)
-        const teamUserRep = getCustomRepository(TORMTeamUserRepository)
+  async insert(
+    quickChallenge: QuickChallenge,
+    teams: Team[],
+    teamsUsers: TeamUser[]
+  ) {
+    const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository);
+    const teamRep = getCustomRepository(TORMTeamRepository);
+    const teamUserRep = getCustomRepository(TORMTeamUserRepository);
 
-        await quickChallengeRep.save(quickChallenge)
-        await teamRep.save(teams)
-        await teamUserRep.save(teamsUsers)
-        const createdQuickChallenge = await quickChallengeRep.findByIds([quickChallenge.id])
+    await quickChallengeRep.save(quickChallenge);
+    await teamRep.save(teams);
+    await teamUserRep.save(teamsUsers);
+    const createdQuickChallenge = await quickChallengeRep.findByIds([
+      quickChallenge.id,
+    ]);
 
-        //return new QuickChallenge(createdQuickChallenge.id, createdQuickChallenge.name, createdQuickChallenge.invitationCode, createdQuickChallenge.type, createdQuickChallenge.goal, createdQuickChallenge.goalMeasure, createdQuickChallenge.finished, createdQuickChallenge.ownerId, createdQuickChallenge.online, createdQuickChallenge.alreadyBegin, createdQuickChallenge.maxTeams, undefined, createdTeams)
-        return createdQuickChallenge
-    }
+    //return new QuickChallenge(createdQuickChallenge.id, createdQuickChallenge.name, createdQuickChallenge.invitationCode, createdQuickChallenge.type, createdQuickChallenge.goal, createdQuickChallenge.goalMeasure, createdQuickChallenge.finished, createdQuickChallenge.ownerId, createdQuickChallenge.online, createdQuickChallenge.alreadyBegin, createdQuickChallenge.maxTeams, undefined, createdTeams)
+    return createdQuickChallenge;
+  }
 
-    async getUserQuickChallengesById(userId: string) {
-        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+  async getUserQuickChallengesById(userId: string) {
+    const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository);
 
-        const quickChallenges = await quickChallengeRep.find({relations: ["teams", "teams.members"], where: {ownerId: userId}})
+    const quickChallenges = await quickChallengeRep.find({
+      relations: ["teams", "teams.members"],
+      where: { ownerId: userId },
+    });
 
-        return quickChallenges
-    }
+    return quickChallenges;
+  }
 
-    async getQuickChallengeById(id: string) {
-        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+  async deleteUserQuickChallengesById(userId: string) {
+    const repository = getCustomRepository(TORMQuickChallengeRepository);
+    return repository
+      .createQueryBuilder()
+      .delete()
+      .from(QuickChallenge)
+      .where("owner_id = :id", { id: userId })
+      .execute();
+  }
 
-        const quickChallenge = await quickChallengeRep.findOne({where: {id: id}})
+  async getQuickChallengeById(id: string) {
+    const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository);
 
-        return quickChallenge
-    }
+    const quickChallenge = await quickChallengeRep.findOne({
+      where: { id: id },
+    });
 
-    async deleteQuickChallenge(quickChallengeToDelete: QuickChallenge) {
-        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
-        
-        await quickChallengeRep.remove(quickChallengeToDelete)
-    }
+    return quickChallenge;
+  }
 
-    async getTeamsFromQuickChallengeById(id: string) {
-        const teamRep = getCustomRepository(TORMTeamRepository)
+  async deleteQuickChallenge(quickChallengeToDelete: QuickChallenge) {
+    const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository);
 
-        const teams = await teamRep.find({where: {challengeId: id}})
+    await quickChallengeRep.remove(quickChallengeToDelete);
+  }
 
-        return teams
-    }
+  async getTeamsFromQuickChallengeById(id: string) {
+    const teamRep = getCustomRepository(TORMTeamRepository);
 
-    async getTeamUserById(id: string) {
-        const teamUserRep = getCustomRepository(TORMTeamUserRepository)
+    const teams = await teamRep.find({ where: { challengeId: id } });
 
-        const teamUser = await teamUserRep.findOne({where: {id: id}})
+    return teams;
+  }
 
-        return teamUser
-    }
+  async getTeamUserById(id: string) {
+    const teamUserRep = getCustomRepository(TORMTeamUserRepository);
 
-    async getTeamById(id: string) {
-        const teamRep = getCustomRepository(TORMTeamRepository)
+    const teamUser = await teamUserRep.findOne({ where: { id: id } });
 
-        const team = await teamRep.findOne({where: {id: id}})
+    return teamUser;
+  }
 
-        return team
-    }
+  async getTeamById(id: string) {
+    const teamRep = getCustomRepository(TORMTeamRepository);
 
-    async updateTeamUser(teamUser: TeamUser) {
-        const teamUserRep = getCustomRepository(TORMTeamUserRepository)
+    const team = await teamRep.findOne({ where: { id: id } });
 
-        await teamUserRep.update({
-            id: teamUser.id
-        },{
-            score: teamUser.score
-        })
+    return team;
+  }
 
-        const updatedTeamUser = this.getTeamUserById(teamUser.id)
-        return updatedTeamUser
-    }
+  async updateTeamUser(teamUser: TeamUser) {
+    const teamUserRep = getCustomRepository(TORMTeamUserRepository);
 
-    async updateAlreadyBeginQuickChallenge(challenge: QuickChallenge) {
-        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+    await teamUserRep.update(
+      {
+        id: teamUser.id,
+      },
+      {
+        score: teamUser.score,
+      }
+    );
 
-        await quickChallengeRep.update({
-            id: challenge.id
-        },{
-            alreadyBegin: challenge.alreadyBegin
-        })
+    const updatedTeamUser = this.getTeamUserById(teamUser.id);
+    return updatedTeamUser;
+  }
 
-        const updatedQuickChallenge = this.getQuickChallengeById(challenge.id)
-        return updatedQuickChallenge
-    }
+  async updateAlreadyBeginQuickChallenge(challenge: QuickChallenge) {
+    const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository);
 
-    async updateFinishedQuickChallenge(challenge: QuickChallenge) {
-        const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository)
+    await quickChallengeRep.update(
+      {
+        id: challenge.id,
+      },
+      {
+        alreadyBegin: challenge.alreadyBegin,
+      }
+    );
 
-        await quickChallengeRep.update({
-            id: challenge.id
-        },{
-            finished: challenge.finished
-        })
+    const updatedQuickChallenge = this.getQuickChallengeById(challenge.id);
+    return updatedQuickChallenge;
+  }
 
-        const updatedQuickChallenge = this.getQuickChallengeById(challenge.id)
-        return updatedQuickChallenge
-    }
+  async updateFinishedQuickChallenge(challenge: QuickChallenge) {
+    const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository);
+
+    await quickChallengeRep.update(
+      {
+        id: challenge.id,
+      },
+      {
+        finished: challenge.finished,
+      }
+    );
+
+    const updatedQuickChallenge = this.getQuickChallengeById(challenge.id);
+    return updatedQuickChallenge;
+  }
 }
 
 @EntityRepository(QuickChallenge)
