@@ -13,7 +13,11 @@ export class UserController {
 
     try {
       const userWithoutPassword = await userService.createAccount(user);
-      res.status(HTTPCodes.Created).json({ user: userWithoutPassword });
+      const ret = await userService.getUserAuthToken(
+        req.body.email,
+        req.body.password
+      );
+      res.status(HTTPCodes.Created).json({ token: ret[0], user: userWithoutPassword });
     } catch (error) {
       switch (error.code) {
         case "23505":
@@ -79,4 +83,26 @@ export class UserController {
       res.status(HTTPCodes.InternalServerError).json({ error: error });
     }
   }
+
+ async getUserToken(req:Request, res: Response) {
+  try {
+    const ret = await userService.getUserAuthToken(
+      req.body.email,
+      req.body.password
+    );
+    res.status(HTTPCodes.Success).json({ token: ret[0] });
+  } catch (error) {
+    switch (error.message) {
+      case UserLoginErrors.wrongEmailPasswordCombination:
+        res.status(HTTPCodes.Forbidden).json(error.message);
+        return;
+      case UserLoginErrors.userNotFound:
+        res.status(HTTPCodes.NotFound).json(error.message);
+        return;
+      default:
+        res.status(HTTPCodes.InternalServerError).json(error);
+        return;
+    }
+  }
+ }
 }

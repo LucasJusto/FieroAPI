@@ -35,6 +35,14 @@ router.post(
   }
 );
 
+router.post(
+  "/user/token",
+  validate([body("email").isEmail(), body("password").isString().notEmpty()]),
+  async(req,res) => {
+    userController.getUserToken(req, res);
+  }
+);
+
 router.delete(
   "/user/:id",
   [authToken(), validate([param("id").isString().notEmpty()])],
