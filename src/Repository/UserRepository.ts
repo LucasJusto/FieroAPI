@@ -5,6 +5,7 @@ import {
   getCustomRepository,
   Repository,
 } from "typeorm";
+import { VerificationCode } from "../Model/VerificationCode.js";
 
 export class UserRepository {
   async insert(user: User) {
@@ -23,17 +24,7 @@ export class UserRepository {
 
   async getUserByEmail(email: string) {
     const userRep = getCustomRepository(TORMUserRepository);
-    const userFromDB = await userRep
-      .createQueryBuilder("user")
-      .select("user.password")
-      .addSelect("user.salt")
-      .addSelect("user.email")
-      .addSelect("user.name")
-      .addSelect("user.id")
-      .addSelect("user.createdAt")
-      .addSelect("user.updatedAt")
-      .where("user.email = :email", { email })
-      .getOne();
+    const userFromDB = await userRep.findOne({ where: { email: email } });
     const user = new User(
       userFromDB?.id || "",
       userFromDB?.email || "",
@@ -45,6 +36,11 @@ export class UserRepository {
     );
 
     return user;
+  }
+
+  async insertVerificationCodeForUser(verificationCode: VerificationCode) {
+    const verificationCodeRep = getCustomRepository(TORMVerificationCodeRepository)
+    return await verificationCodeRep.save(verificationCode)
   }
 
   async getUserById(id: string) {
@@ -78,3 +74,6 @@ export class UserRepository {
 
 @EntityRepository(User)
 class TORMUserRepository extends Repository<User> {}
+
+@EntityRepository(VerificationCode)
+class TORMVerificationCodeRepository extends Repository<VerificationCode> {}

@@ -29,9 +29,22 @@ router.post(
 
 router.post(
   "/user/login",
-  validate([body("email").isEmail(), body("password").isString().notEmpty()]),
+  validate([
+    body("email").isEmail(), 
+    body("password").isString().notEmpty()
+  ]),
   async (req, res) => {
     userController.handleLogin(req, res);
+  }
+);
+
+router.post(
+  "/user/verificationCode",
+  validate([
+    body("email").isEmail()
+  ]),
+  async (req, res) => {
+    userController.handleVerificationCode(req, res);
   }
 );
 
@@ -54,6 +67,8 @@ router.delete(
       });
   }
 );
+
+
 
 //QUICK CHALLENGE ROUTES
 router.post(

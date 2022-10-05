@@ -53,6 +53,32 @@ export class UserController {
     }
   }
 
+  async handleVerificationCode(req: Request, res: Response) {
+    const { email } = req.body
+    const user = await userService.getUserByEmail(email)
+    
+    if(user.id.length > 0 && user.email.length > 0) {
+      try {
+        //creates and saves verification code
+        const verificationCode = await userService.createVerificationCodeForUser(user.id)
+
+        //sends it to the user's email
+
+
+        res.status(HTTPCodes.Created).json('Verification code created and sent to user!')
+        return
+      }
+      catch(error) {
+        res.status(HTTPCodes.InternalServerError).json(error)
+        return
+      }
+    }
+    else {
+      res.status(HTTPCodes.NotFound).json('User not found!')
+      return
+    }
+  }
+
   async handleAccountDeletion(req: Request, res: Response) {
     try {
       const onDeleteUser = await userService.getUserById(req.params.id);

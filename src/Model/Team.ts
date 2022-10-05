@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryColumn, UpdateDateColumn, CreateDateColumn, ManyToOne, ManyToMany, JoinTable, OneToMany, JoinColumn } from "typeorm"
-import { QuickChallenge } from "./QuickChallenge.js";
-import { TeamUser } from "./TeamUser.js";
-import { User } from "./User.js";
+import { Entity, Column, PrimaryColumn, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from "typeorm"
+import { QuickChallenge } from "./QuickChallenge.js"
+import { TeamUser } from "./TeamUser.js"
+import { User } from "./User.js"
 
 @Entity()
 export class Team {

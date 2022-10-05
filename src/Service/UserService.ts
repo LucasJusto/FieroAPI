@@ -1,9 +1,11 @@
-import { User } from "../Model/User.js";
-import { UserRepository } from "../Repository/UserRepository.js";
-import jwt from "jsonwebtoken";
-import variables from "../config/EnviromentVariables.js";
-import bcrypt from "bcrypt";
-import crypto from "crypto";
+import { User } from "../Model/User.js"
+import { UserRepository } from "../Repository/UserRepository.js"
+import jwt from "jsonwebtoken"
+import variables from "../config/EnviromentVariables.js"
+import bcrypt from "bcrypt"
+import crypto from "crypto"
+import { VerificationCode } from "../Model/VerificationCode.js"
+import uuidV4 from "../utils/uuidv4Generator.js"
 
 const userRepository = new UserRepository();
 
@@ -25,8 +27,17 @@ export class UserService {
     return await userRepository.insert(userToCreate);
   }
 
+  async createVerificationCodeForUser(userId: string) {
+    const verificationCode = new VerificationCode(uuidV4(), userId)
+    return await userRepository.insertVerificationCodeForUser(verificationCode)
+  }
+
   async getUserById(id: string) {
-    return await userRepository.getUserById(id);
+    return await userRepository.getUserById(id)
+  }
+
+  async getUserByEmail(email: string) {
+    return await userRepository.getUserByEmail(email)
   }
 
   async wipeUserData(user: User) {
