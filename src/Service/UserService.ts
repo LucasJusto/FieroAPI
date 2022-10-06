@@ -6,6 +6,7 @@ import bcrypt from "bcrypt"
 import crypto from "crypto"
 import { VerificationCode } from "../Model/VerificationCode.js"
 import uuidV4 from "../utils/uuidv4Generator.js"
+import e from "express"
 
 const userRepository = new UserRepository();
 
@@ -38,6 +39,40 @@ export class UserService {
 
   async getUserByEmail(email: string) {
     return await userRepository.getUserByEmail(email)
+  }
+
+  async checkVerificationCode(verificationCode: string, email: string) {
+    const verificationCodeFromRep = await userRepository.getVerificationCodeById(verificationCode)
+
+    //checking verificationCode expirationDate
+    const createdAt = verificationCodeFromRep.createdAt
+    const distanceFromCreatedAt = Date.UTC(createdAt.getUTCFullYear(), createdAt.getUTCMonth(), createdAt.getUTCDate(), createdAt.getUTCHours(), createdAt.getUTCMinutes(), createdAt.getUTCSeconds())
+    const distanceFromNow = Date.now()
+    const verificationCodeAgeInHours = (distanceFromNow-distanceFromCreatedAt)/1000/60/60
+    const verificationCodeMaxDurationInHours = 24
+
+    if(verificationCodeAgeInHours < verificationCodeMaxDurationInHours) {
+      const user = await userRepository.getUserByEmail(email)
+      if(user.email = email) {
+        return true
+      }
+    }
+    
+    return false
+  }
+
+  async patchPassword(email: string, newPassword: string) {
+    const user = await userRepository.getUserByEmail(email)
+    const encryptedPassword = crypto
+      .createHash("md5")
+      .update(newPassword + user.salt)
+      .digest("hex");
+    user.password = encryptedPassword
+    const patchedUser = await userRepository.update(user)
+    patchedUser.password = ''
+    patchedUser.salt = ''
+
+    return patchedUser
   }
 
   async wipeUserData(user: User) {

@@ -35,7 +35,6 @@ export class UserRepository {
             .addSelect('user.updatedAt')
             .where('user.email = :email', { email })
             .getOne()
-    console.log(userFromDB)
     const user = new User(
       userFromDB?.id || "",
       userFromDB?.email || "",
@@ -47,6 +46,16 @@ export class UserRepository {
     );
 
     return user;
+  }
+
+  async update(user: User) {
+    const userRep = getCustomRepository(TORMUserRepository)
+    return await userRep.save(user)
+  }
+
+  async getVerificationCodeById(id: string) {
+    const verificationCodeRep = getCustomRepository(TORMVerificationCodeRepository)
+    return await verificationCodeRep.findOneOrFail(id)
   }
 
   async insertVerificationCodeForUser(verificationCode: VerificationCode) {

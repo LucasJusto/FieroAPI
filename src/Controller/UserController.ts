@@ -79,6 +79,28 @@ export class UserController {
     }
   }
 
+  async handlePasswordPatch(req: Request, res: Response) {
+    const { verificationCode, newPassword, email } = req.body
+
+    try {
+      const permission = await userService.checkVerificationCode(verificationCode, email)
+
+      if(permission) {
+        const user = await userService.patchPassword(email, newPassword)
+        res.status(HTTPCodes.Success).json('Successfully changed password!')
+        return
+      }
+      else {
+        res.status(HTTPCodes.Unauthorized).json('wrong or expired verification code')
+        return
+      }
+    }
+    catch(error) {
+      res.status(HTTPCodes.InternalServerError).json(error)
+      return
+    }
+  }
+
   async handleAccountDeletion(req: Request, res: Response) {
     try {
       const onDeleteUser = await userService.getUserById(req.params.id);
@@ -105,7 +127,6 @@ export class UserController {
         return;
       }
     } catch (error) {
-      console.log(error);
       res.status(HTTPCodes.InternalServerError).json({ error: error });
     }
   }

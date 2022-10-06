@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { UserController } from "./Controller/UserController.js";
 import { QuickChallengeController } from "./Controller/QuickChallengeController.js";
 import { authToken } from "./Middleware/auth.js";
+import { VerificationCode } from "./Model/VerificationCode.js";
 
 const router = Router();
 const userController = new UserController();
@@ -45,6 +46,18 @@ router.post(
   ]),
   async (req, res) => {
     userController.handleVerificationCode(req, res);
+  }
+);
+
+router.patch(
+  "/user/password/",
+  validate([
+    body("newPassword").isString().notEmpty(),
+    body("verificationCode").isString().notEmpty(),
+    body("email").isEmail()
+  ]),
+  async (req, res) => {
+    userController.handlePasswordPatch(req, res);
   }
 );
 
