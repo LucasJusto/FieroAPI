@@ -30,6 +30,7 @@ export class UserService {
 
   async createVerificationCodeForUser(userId: string) {
     const verificationCode = new VerificationCode(uuidV4(), userId)
+    await userRepository.deleteVerificationCodeByUserId(userId)
     return await userRepository.insertVerificationCodeForUser(verificationCode)
   }
 
@@ -57,7 +58,9 @@ export class UserService {
         return true
       }
     }
-    
+    else {
+      await userRepository.deleteVerificationCode(verificationCodeFromRep)
+    }
     return false
   }
 
@@ -71,6 +74,7 @@ export class UserService {
     const patchedUser = await userRepository.update(user)
     patchedUser.password = ''
     patchedUser.salt = ''
+    await userRepository.deleteVerificationCodeByUserId(user.id)
 
     return patchedUser
   }

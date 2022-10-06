@@ -48,6 +48,16 @@ export class UserRepository {
     return user;
   }
 
+  async deleteVerificationCodeByUserId(userId: string) {
+    const verificationCodeRep = getCustomRepository(TORMVerificationCodeRepository)
+    return verificationCodeRep
+      .createQueryBuilder()
+      .delete()
+      .from(VerificationCode)
+      .where("owner_id = :id", { id: userId })
+      .execute();
+  }
+
   async update(user: User) {
     const userRep = getCustomRepository(TORMUserRepository)
     return await userRep.save(user)
@@ -78,6 +88,12 @@ export class UserRepository {
     );
 
     return user;
+  }
+
+  async deleteVerificationCode(verificationCode: VerificationCode) {
+    const verificationCodeRep = getCustomRepository(TORMVerificationCodeRepository)
+
+    await verificationCodeRep.remove(verificationCode);
   }
 
   async wipeUserData(user: User) {
