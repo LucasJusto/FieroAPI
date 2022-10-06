@@ -65,7 +65,7 @@ export class UserRepository {
 
   async getVerificationCodeById(id: string) {
     const verificationCodeRep = getCustomRepository(TORMVerificationCodeRepository)
-    return await verificationCodeRep.findOneOrFail(id)
+    return await verificationCodeRep.findOne(id)
   }
 
   async insertVerificationCodeForUser(verificationCode: VerificationCode) {

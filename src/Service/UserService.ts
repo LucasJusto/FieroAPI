@@ -44,7 +44,9 @@ export class UserService {
 
   async checkVerificationCode(verificationCode: string, email: string) {
     const verificationCodeFromRep = await userRepository.getVerificationCodeById(verificationCode)
-
+    if(!verificationCodeFromRep) {
+      return false
+    }
     //checking verificationCode expirationDate
     const createdAt = verificationCodeFromRep.createdAt
     const distanceFromCreatedAt = Date.UTC(createdAt.getUTCFullYear(), createdAt.getUTCMonth(), createdAt.getUTCDate(), createdAt.getUTCHours(), createdAt.getUTCMinutes(), createdAt.getUTCSeconds())
