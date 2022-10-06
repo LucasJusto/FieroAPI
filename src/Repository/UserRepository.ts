@@ -24,7 +24,18 @@ export class UserRepository {
 
   async getUserByEmail(email: string) {
     const userRep = getCustomRepository(TORMUserRepository);
-    const userFromDB = await userRep.findOne({ where: { email: email } });
+    const userFromDB = await userRep
+            .createQueryBuilder('user')
+            .select('user.password')
+            .addSelect('user.salt')
+            .addSelect('user.email')
+            .addSelect('user.name')
+            .addSelect('user.id')
+            .addSelect('user.createdAt')
+            .addSelect('user.updatedAt')
+            .where('user.email = :email', { email })
+            .getOne()
+    console.log(userFromDB)
     const user = new User(
       userFromDB?.id || "",
       userFromDB?.email || "",
