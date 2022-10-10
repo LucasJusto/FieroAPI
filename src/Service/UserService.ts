@@ -7,6 +7,7 @@ import crypto from "crypto"
 import { VerificationCode } from "../Model/VerificationCode.js"
 import uuidV4 from "../utils/uuidv4Generator.js"
 import e from "express"
+import sgMail from "@sendgrid/mail"
 
 const userRepository = new UserRepository();
 
@@ -64,6 +65,27 @@ export class UserService {
       await userRepository.deleteVerificationCode(verificationCodeFromRep)
     }
     return false
+  }
+
+  async sendMail(email: string, verificationCode: VerificationCode) {
+    if(variables.SENDGRID_API_KEY) {
+      sgMail.setApiKey(variables.SENDGRID_API_KEY)
+
+      const msg = {
+        to: email,
+        from: 'fieroappcontato@gmail.com',
+        subject: 'Fiero - Verification Code',
+        text: 'Se lembrar senhas fosse um desafio, todos nós seríamos perdedores. Utilize o código '+verificationCode.id+' dentro do Fiero para realizar a troca da sua senha.',
+        html: '<p>Se lembrar senhas fosse um desafio, todos nós seríamos perdedores.</p>'+'<p>Utilize o código <strong>'+verificationCode.id+'</strong> dentro do Fiero para realizar a troca da sua senha.</p>',
+      }
+  
+      sgMail
+        .send(msg)
+        .then((response) => {
+        })
+        .catch((error) => {
+        })
+    }
   }
 
   async patchPassword(email: string, newPassword: string) {

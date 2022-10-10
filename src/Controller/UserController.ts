@@ -63,7 +63,7 @@ export class UserController {
         const verificationCode = await userService.createVerificationCodeForUser(user.id)
 
         //sends it to the user's email
-
+        const sendMail = await userService.sendMail(email, verificationCode)
 
         res.status(HTTPCodes.Created).json('Verification code created and sent to user!')
         return
