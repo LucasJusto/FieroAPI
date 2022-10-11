@@ -96,8 +96,14 @@ export class UserController {
       }
     }
     catch(error) {
-      res.status(HTTPCodes.InternalServerError).json(error)
-      return
+      if(error.code === '22P02') {
+        res.status(HTTPCodes.Unauthorized).json('wrong or expired verification code')
+        return
+      }
+      else {
+        res.status(HTTPCodes.InternalServerError).json(error)
+        return
+      }
     }
   }
 
