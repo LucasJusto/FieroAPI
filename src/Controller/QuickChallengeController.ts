@@ -3,8 +3,6 @@ import uuidV4 from "../utils/uuidv4Generator.js";
  import { Request, Response } from "express";
  import { QuickChallenge } from "../Model/QuickChallenge.js";
  import { QuickChallengeService } from "../Service/QuickChallengeService.js";
- import { InsertValuesMissingError } from "typeorm";
- import { body } from "express-validator";
  import { QuickChallengeRepository } from "../Repository/QuickChallengeRepository.js";
 
  const quickChallengeService = new QuickChallengeService();
@@ -15,19 +13,23 @@ import uuidV4 from "../utils/uuidv4Generator.js";
    async createChallenge(req: Request, res: Response) {
      const { name, type, goal, goalMeasure, userId, online, maxTeams } =
        req.body;
-     if (maxTeams > maxMaxTeams) {
-       res.status(HTTPCodes.BadRequest).json({
-         message: "Invalid maxTeams value. It cant exceed " + maxMaxTeams + ".",
-       });
-       return;
-     }
+    if (online === false) {
+      if (maxTeams > maxMaxTeams) {
+        res.status(HTTPCodes.BadRequest).json({
+          message: "Invalid maxTeams value. It cant exceed " + maxMaxTeams + " for offline challenges.",
+        });
+        return;
+      }
+    }
+     
      if (!Object.values(QuickChallengeTypes).includes(type)) {
        res.status(HTTPCodes.BadRequest).json({
          message: "invalid quick challenge type",
          validTypes: Object.values(QuickChallengeTypes),
        });
        return;
-     } else if (
+     } 
+     else if (
        type === QuickChallengeTypes.bestof &&
        (!Object.values(QuickChallengeBestofGoals).includes(goal) ||
          !Object.values(QuickChallengeBestofMeasures).includes(goalMeasure))
@@ -40,7 +42,8 @@ import uuidV4 from "../utils/uuidv4Generator.js";
          validMeasures: Object.values(QuickChallengeBestofMeasures),
        });
        return;
-     } else if (
+     } 
+     else if (
        type === QuickChallengeTypes.amount &&
        !Object.values(QuickChallengeAmountMeasures).includes(goalMeasure)
      ) {
@@ -49,7 +52,8 @@ import uuidV4 from "../utils/uuidv4Generator.js";
          validMeasures: Object.values(QuickChallengeAmountMeasures),
        });
        return;
-     } else if (
+     } 
+     else if (
        type === QuickChallengeTypes.byTime &&
        !Object.values(QuickChallengeByTimeMeasures).includes(goalMeasure)
      ) {
@@ -58,7 +62,8 @@ import uuidV4 from "../utils/uuidv4Generator.js";
          validMeasures: Object.values(QuickChallengeByTimeMeasures),
        });
        return;
-     } else {
+     } 
+     else {
        const quickChallenge = new QuickChallenge(
          uuidV4(),
          name,
@@ -96,7 +101,8 @@ import uuidV4 from "../utils/uuidv4Generator.js";
                  .status(HTTPCodes.Created)
                  .json({ quickChallenge: createdQuickChallenge });
                return;
-             } else {
+             } 
+             else {
                res.status(HTTPCodes.BadRequest).json({
                  message: "Invalid numberOfTeams",
                  validNumberOfTeams: Object.values(
@@ -105,14 +111,16 @@ import uuidV4 from "../utils/uuidv4Generator.js";
                });
                return;
              }
-           } else {
+           } 
+           else {
              res.status(HTTPCodes.BadRequest).json({
                message:
                  "Offline challenges need to send the paramater numberOfTeams at body.",
              });
              return;
            }
-         } else {
+         } 
+         else {
            const createdQuickChallenge =
              await quickChallengeService.createQuickChallenge(quickChallenge, 1);
            res
