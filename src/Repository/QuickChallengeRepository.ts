@@ -144,6 +144,14 @@ export class QuickChallengeRepository {
     const updatedQuickChallenge = this.getQuickChallengeById(challenge.id);
     return updatedQuickChallenge;
   }
+
+  async insertTeam(team: Team, teamUser: TeamUser) {
+    const teamRep = getCustomRepository(TORMTeamRepository);
+    const teamUserRep = getCustomRepository(TORMTeamUserRepository)
+    
+    await teamRep.save(team)
+    await teamUserRep.save(teamUser)
+  }
 }
 
 @EntityRepository(QuickChallenge)

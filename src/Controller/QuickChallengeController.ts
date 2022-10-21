@@ -281,6 +281,28 @@ import uuidV4 from "../utils/uuidv4Generator.js";
        return;
      }
    }
+
+    async joinByInvitationCode(req: Request, res: Response) {
+      const { userId, invitationCode } = req.body
+      try {
+        const quickChallenge = await quickChallengeRepository.getQuickChallengeByInvitationCode(invitationCode)
+        if (quickChallenge.length < 1) {
+          res.status(HTTPCodes.NotFound).json({ message: 'QuickChallenge not found' });
+          return;
+        }
+        if(quickChallenge[0].teams.filter(team => team.ownerId == userId).length > 0) {
+          res.status(HTTPCodes.Conflict).json({ message: 'This user is already playing this QuickChallenge' });
+          return;
+        }
+        const createdTeam = await quickChallengeService.insertTeam(quickChallenge[0], userId)
+        res.status(HTTPCodes.Created).json({ team: createdTeam });
+        return;
+      }
+      catch(error) {
+        res.status(HTTPCodes.InternalServerError).json({ error: error });
+        return;
+      }
+    }
  }
 
  export enum QuickChallengeTypes {

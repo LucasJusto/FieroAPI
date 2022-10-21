@@ -103,6 +103,19 @@ router.post(
   }
 );
 
+router.post(
+  "/quickChallenge/join",
+  [
+    authToken(), 
+    validate([
+      body("invitationCode").isString().notEmpty()
+    ])
+  ],
+  async (req: Request, res: Response) => {
+    quickChallengeController.joinByInvitationCode(req, res);
+  }
+);
+
 router.get(
   "/quickChallenge/createdByMe",
   [authToken(), validate([body("userId").isString().notEmpty()])],

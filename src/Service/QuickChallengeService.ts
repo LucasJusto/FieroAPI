@@ -108,4 +108,13 @@ export class QuickChallengeService {
       challenge
     );
   }
+
+  async insertTeam(quickChallenge: QuickChallenge, userId: string) {
+    const member = await userRepository.getUserById(userId);
+    const team = new Team(uuidV4(), member.name, quickChallenge.id, member);
+    const teamUser = new TeamUser(uuidV4(), team, 0, member);
+    await quickChallengeRepository.insertTeam(team, teamUser)
+
+    return team
+  }
 }
