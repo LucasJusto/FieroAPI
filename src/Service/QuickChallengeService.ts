@@ -4,6 +4,7 @@ import { TeamUser } from "../Model/TeamUser.js";
 import { QuickChallengeRepository } from "../Repository/QuickChallengeRepository.js";
 import { UserRepository } from "../Repository/UserRepository.js";
 import uuidV4 from "../utils/uuidv4Generator.js";
+import randomStringGenerator from "../utils/randomStringGenerator.js";
 
 const quickChallengeRepository = new QuickChallengeRepository();
 const userRepository = new UserRepository();
@@ -86,6 +87,19 @@ export class QuickChallengeService {
     return await quickChallengeRepository.updateAlreadyBeginQuickChallenge(
       challenge
     );
+  }
+
+  async getValidInvitationCode() {
+    const INVITATION_CODE_LENGTH = 5
+    var randomInvitationCode = randomStringGenerator(INVITATION_CODE_LENGTH)
+    var quickChallengesWithThisInvitationCode = await quickChallengeRepository.getQuickChallengeByInvitationCode(randomInvitationCode)
+    
+    while(quickChallengesWithThisInvitationCode.length > 0) {
+      randomInvitationCode = randomStringGenerator(INVITATION_CODE_LENGTH)
+      quickChallengesWithThisInvitationCode = await quickChallengeRepository.getQuickChallengeByInvitationCode(randomInvitationCode)
+    }
+    
+    return randomInvitationCode
   }
 
   async patchFinished(finished: boolean, challenge: QuickChallenge) {

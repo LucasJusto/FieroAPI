@@ -10,7 +10,7 @@ export class QuickChallenge {
     @Column({ nullable: false, type: 'varchar' })
     name: string
 
-    @Column({ nullable: false, unique: true, type: 'uuid' })
+    @Column({ nullable: true, unique: true, type: 'varchar' })
     invitationCode: string
 
     @ManyToOne(() => User, { eager: true })
@@ -50,10 +50,9 @@ export class QuickChallenge {
     @UpdateDateColumn({ name: "updated_At" })
     updatedAt: Date
 
-    constructor(id: string, name: string, invitationCode: string, type: string, goal: number, goalMeasure: string, finished: boolean, ownerId: string, online: boolean, alreadyBegin: boolean, maxTeams: number, owner?: User, teams?: Team[], createdAt?: Date, updatedAt?: Date) {
+    constructor(id: string, name: string, type: string, goal: number, goalMeasure: string, finished: boolean, ownerId: string, online: boolean, alreadyBegin: boolean, maxTeams: number, invitationCode?: string,owner?: User, teams?: Team[], createdAt?: Date, updatedAt?: Date) {
         this.id = id
         this.name = name
-        this.invitationCode = invitationCode
         this.type = type
         this.goal = goal
         this.goalMeasure = goalMeasure
@@ -63,6 +62,9 @@ export class QuickChallenge {
         this.alreadyBegin = alreadyBegin
         this.maxTeams = maxTeams
 
+        if(invitationCode) {
+            this.invitationCode = invitationCode
+        }
         if(teams) {
             this.teams = teams
         }

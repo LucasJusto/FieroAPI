@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import { UserController } from "./Controller/UserController.js";
 import { QuickChallengeController } from "./Controller/QuickChallengeController.js";
 import { authToken } from "./Middleware/auth.js";
-import { VerificationCode } from "./Model/VerificationCode.js";
+import { QuickChallengeService } from "./Service/QuickChallengeService.js";
 
 const router = Router();
 const userController = new UserController();

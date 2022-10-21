@@ -64,19 +64,7 @@ import uuidV4 from "../utils/uuidv4Generator.js";
        return;
      } 
      else {
-       const quickChallenge = new QuickChallenge(
-         uuidV4(),
-         name,
-         uuidV4(),
-         type,
-         goal,
-         goalMeasure,
-         false,
-         userId,
-         online,
-         false,
-         maxTeams
-       );
+       const quickChallenge = new QuickChallenge(uuidV4(), name, type, goal, goalMeasure, false, userId, online, false, maxTeams)
        try {
          if (online === false) {
            const numberOfTeams = req.body["numberOfTeams"];
@@ -87,19 +75,9 @@ import uuidV4 from "../utils/uuidv4Generator.js";
                });
                return;
              }
-             if (
-               Object.values(QuickChallengePossibleNumberOfTeams)
-                 .filter((value) => typeof value == "number")
-                 .includes(numberOfTeams)
-             ) {
-               const createdQuickChallenge =
-                 await quickChallengeService.createQuickChallenge(
-                   quickChallenge,
-                   numberOfTeams
-                 );
-               res
-                 .status(HTTPCodes.Created)
-                 .json({ quickChallenge: createdQuickChallenge });
+             if (Object.values(QuickChallengePossibleNumberOfTeams).filter((value) => typeof value == "number").includes(numberOfTeams)) {
+               const createdQuickChallenge = await quickChallengeService.createQuickChallenge(quickChallenge, numberOfTeams);
+               res.status(HTTPCodes.Created).json({ quickChallenge: createdQuickChallenge });
                return;
              } 
              else {
@@ -121,11 +99,9 @@ import uuidV4 from "../utils/uuidv4Generator.js";
            }
          } 
          else {
-           const createdQuickChallenge =
-             await quickChallengeService.createQuickChallenge(quickChallenge, 1);
-           res
-             .status(HTTPCodes.Created)
-             .json({ quickChallenge: createdQuickChallenge });
+           quickChallenge.invitationCode = await quickChallengeService.getValidInvitationCode()
+           const createdQuickChallenge = await quickChallengeService.createQuickChallenge(quickChallenge, 1);
+           res.status(HTTPCodes.Created).json({ quickChallenge: createdQuickChallenge });
            return;
          }
        } catch (error) {

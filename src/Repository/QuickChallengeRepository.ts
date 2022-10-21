@@ -27,7 +27,6 @@ export class QuickChallengeRepository {
       quickChallenge.id,
     ]);
 
-    //return new QuickChallenge(createdQuickChallenge.id, createdQuickChallenge.name, createdQuickChallenge.invitationCode, createdQuickChallenge.type, createdQuickChallenge.goal, createdQuickChallenge.goalMeasure, createdQuickChallenge.finished, createdQuickChallenge.ownerId, createdQuickChallenge.online, createdQuickChallenge.alreadyBegin, createdQuickChallenge.maxTeams, undefined, createdTeams)
     return createdQuickChallenge;
   }
 
@@ -66,6 +65,12 @@ export class QuickChallengeRepository {
     const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository);
 
     await quickChallengeRep.remove(quickChallengeToDelete);
+  }
+
+  async getQuickChallengeByInvitationCode(invitationCode: string) {
+    const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository);
+
+    return await quickChallengeRep.find({ where: { invitationCode: invitationCode } });
   }
 
   async getTeamsFromQuickChallengeById(id: string) {
