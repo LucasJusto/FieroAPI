@@ -294,8 +294,8 @@ import uuidV4 from "../utils/uuidv4Generator.js";
           res.status(HTTPCodes.Conflict).json({ message: 'This user is already playing this QuickChallenge' });
           return;
         }
-        const createdTeam = await quickChallengeService.insertTeam(quickChallenge[0], userId)
-        res.status(HTTPCodes.Created).json({ team: createdTeam });
+        const quickChallengeWithNewTeam = await quickChallengeService.insertTeam(quickChallenge[0], userId)
+        res.status(HTTPCodes.Created).json({ quickChallenge: quickChallengeWithNewTeam });
         return;
       }
       catch(error) {

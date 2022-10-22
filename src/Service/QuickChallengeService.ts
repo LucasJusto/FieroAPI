@@ -114,7 +114,8 @@ export class QuickChallengeService {
     const team = new Team(uuidV4(), member.name, quickChallenge.id, member);
     const teamUser = new TeamUser(uuidV4(), team, 0, member);
     await quickChallengeRepository.insertTeam(team, teamUser)
+    const quickChallengeWithNewTeam = await quickChallengeRepository.getQuickChallengeById(quickChallenge.id)
 
-    return team
+    return quickChallengeWithNewTeam
   }
 }
