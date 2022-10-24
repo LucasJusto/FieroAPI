@@ -121,6 +121,15 @@ import uuidV4 from "../utils/uuidv4Generator.js";
      }
    }
 
+   async getUserPlayingQuickChallengesById(req: Request, res: Response) {
+    try {
+      const quickChallenges = await quickChallengeService.getUserPlayingQuickChallengesById(req.body.userId);
+      res.status(HTTPCodes.Created).json({ quickChallenges: quickChallenges });
+    } catch (error) {
+      res.status(HTTPCodes.InternalServerError).json({ error: error });
+    }
+  }
+
    async deleteQuickChallengesByOwnerId(req: Request, res: Response) {
      try {
        await quickChallengeService.deleteUserQuickChallengesById(req.params.id);

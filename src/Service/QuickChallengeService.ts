@@ -63,6 +63,10 @@ export class QuickChallengeService {
     return await quickChallengeRepository.getUserQuickChallengesById(userId);
   }
 
+  async getUserPlayingQuickChallengesById(userId: string) {
+    return await quickChallengeRepository.getUserPlayingQuickChallengesById(userId);
+  }
+
   async deleteUserQuickChallengesById(userId: string) {
     return await quickChallengeRepository.deleteUserQuickChallengesById(userId);
   }

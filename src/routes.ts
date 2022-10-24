@@ -124,6 +124,14 @@ router.get(
   }
 );
 
+router.get(
+  "/quickChallenge/playing",
+  [authToken()],
+  async (req: Request, res: Response) => {
+    quickChallengeController.getUserPlayingQuickChallengesById(req, res);
+  }
+);
+
 router.delete(
   "/quickChallenge/:id",
   [authToken(), validate([body("userId").isString().notEmpty()])],

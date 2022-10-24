@@ -41,6 +41,26 @@ export class QuickChallengeRepository {
     return quickChallenges;
   }
 
+  async getUserPlayingQuickChallengesById(userId: string) {
+    const quickChallengeRep = getCustomRepository(TORMQuickChallengeRepository);
+
+    const quickChallenges = await createQueryBuilder('QuickChallenge')
+      .leftJoinAndSelect('QuickChallenge.teams', 'teams')
+      .leftJoinAndSelect('teams.members', 'members')
+      .where('members.userId = :userId', { userId: userId })
+      .getMany()
+
+    const quickChallengesIDs = []
+    
+    for(var i = 0; i < quickChallenges.length; i++) {
+      quickChallengesIDs.push((quickChallenges[i] as QuickChallenge).id)
+    }
+
+    const completeQuickChallenges = quickChallengeRep.findByIds(quickChallengesIDs)
+
+    return completeQuickChallenges;
+  }
+
   async deleteUserQuickChallengesById(userId: string) {
     const repository = getCustomRepository(TORMQuickChallengeRepository);
     return repository
