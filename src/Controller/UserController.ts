@@ -109,12 +109,13 @@ export class UserController {
 
   async handleAccountDeletion(req: Request, res: Response) {
     try {
-      const onDeleteUser = await userService.getUserById(req.params.id);
+      const userId = req.body.userId
+      const userToBeDeleted = await userService.getUserById(userId);
 
-      if (onDeleteUser) {
-        if (onDeleteUser.id === req.params.id) {
+      if (userToBeDeleted) {
+        if (userToBeDeleted.id === userId) {
           try {
-            await userService.wipeUserData(onDeleteUser);
+            await userService.handleAccountDeletion(userToBeDeleted);
             res.status(HTTPCodes.Success).json({
               message: "User data was wiped successfully",
             });
@@ -124,7 +125,7 @@ export class UserController {
           }
         } else {
           res
-            .status(HTTPCodes.Forbidden)
+            .status(HTTPCodes.Unauthorized)
             .json({ error: "Permission to delete account denied" });
           return;
         }

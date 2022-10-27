@@ -17,13 +17,16 @@ export class User {
     @Column({ nullable: false, type: 'varchar', select: false })
     salt: string
 
+    @Column({ nullable: false, type: 'boolean', select: false, default: false })
+    inactivated: boolean
+
     @CreateDateColumn({ name: "created_At" })
     createdAt: Date
 
     @UpdateDateColumn({ name: "updated_At" })
     updatedAt: Date
 
-    constructor(id: string, email: string, name: string, password?: string, salt?: string, createdAt?: Date, updatedAt?: Date) {
+    constructor(id: string, email: string, name: string, password?: string, salt?: string, createdAt?: Date, updatedAt?: Date, inactivated?: boolean) {
         this.id = id
         this.email = email
         this.name = name
@@ -38,6 +41,9 @@ export class User {
         }
         if(updatedAt) {
             this.updatedAt = updatedAt
+        }
+        if(inactivated) {
+            this.inactivated = inactivated
         }
     }
 }

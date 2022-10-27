@@ -70,14 +70,10 @@ router.post(
 );
 
 router.delete(
-  "/user/:id",
-  [authToken(), validate([param("id").isString().notEmpty()])],
+  "/user",
+  [authToken()],
   async (req: Request, res: Response) => {
-    quickChallengeController
-      .deleteQuickChallengesByOwnerId(req, res)
-      .then(() => {
-        userController.handleAccountDeletion(req, res);
-      });
+    userController.handleAccountDeletion(req, res)
   }
 );
 

@@ -172,6 +172,50 @@ export class QuickChallengeRepository {
     await teamRep.save(team)
     await teamUserRep.save(teamUser)
   }
+
+  async getTeamsIdsFromNotStartedOnlineChallenges(userId: string) {
+    const teams = await createQueryBuilder('Team')
+    .leftJoinAndSelect('Team.quickChallenge', 'quickChallenge')
+    .where('Team.ownerId = :userId AND quickChallenge.alreadyBegin = false AND quickChallenge.online = true', { userId: userId })
+    .getMany()
+
+    return teams.map(value => (value as Team).id)
+  }
+
+  async getOfflineChallenges(userId: string) {
+    const challenges = await createQueryBuilder('QuickChallenge')
+    .where('QuickChallenge.online = false')
+    .getMany()
+
+    return challenges.map(value => (value as QuickChallenge).id)
+  }
+
+  async getOngoingOwnedOnlineChallenges(userId: string) {
+    const challenges = await createQueryBuilder('QuickChallenge')
+    .leftJoinAndSelect('QuickChallenge.teams', 'teams')
+    .where('QuickChallenge.ownerId = :userId AND QuickChallenge.alreadyBegin = true AND QuickChallenge.online = true AND QuickChallenge.finished = false', { userId: userId })
+    .getMany()
+
+    return (challenges as [QuickChallenge])
+  }
+
+  async getNotStartedOwnedOnlineChallenges(userId: String) {
+    const challenges = await createQueryBuilder('QuickChallenge')
+    .where('QuickChallenge.ownerId = :userId AND QuickChallenge.alreadyBegin = false AND QuickChallenge.online = true', { userId: userId })
+    .getMany()
+
+    return challenges.map(value => (value as QuickChallenge).id)
+  }
+
+  async getOngoingOwnedTeams(userId: string) {
+    const teams = await createQueryBuilder('Team')
+    .leftJoinAndSelect('Team.quickChallenge', 'quickChallenge')
+    .leftJoinAndSelect('Team.members', 'members')
+    .where('Team.ownerId = :userId AND quickChallenge.alreadyBegin = true AND quickChallenge.finished = false AND quickChallenge.online = true', { userId: userId })
+    .getMany()
+
+    return (teams as [Team])
+  }
 }
 
 @EntityRepository(QuickChallenge)

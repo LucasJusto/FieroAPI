@@ -103,8 +103,8 @@ export class UserService {
     return patchedUser
   }
 
-  async wipeUserData(user: User) {
-    return await userRepository.wipeUserData(user);
+  async handleAccountDeletion(user: User) {
+    return await userRepository.handleAccountDeletion(user);
   }
 
   async getUserAuthToken(email: string, password: string) {
