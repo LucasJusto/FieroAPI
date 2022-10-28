@@ -181,4 +181,18 @@ router.patch(
   }
 );
 
+  router.get(
+    "/quickChallenge/:quickChallengeId",
+    [
+      authToken(),
+      validate([
+        param("quickChallengeId").isString().notEmpty()
+      ])
+    ],
+    async (req: Request, res: Response) => {
+      quickChallengeController.getQuickChallengeById(req, res)
+    }
+  );
+
+
 export default router;

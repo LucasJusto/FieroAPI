@@ -312,6 +312,43 @@ import uuidV4 from "../utils/uuidv4Generator.js";
         return;
       }
     }
+
+    async getQuickChallengeById(req: Request, res: Response) {
+      const quickChallengeId = req.params.quickChallengeId
+      const userId = req.body.userId
+
+      try {
+        const quickChallenge = await quickChallengeService.getQuickChallengeById(quickChallengeId)
+
+        if(!quickChallenge) {
+          res.status(HTTPCodes.NotFound).json({ message: "Challenge not found" })
+          return
+        }
+
+        var userIsNotInChallenge = true
+        //checks if userId is in the challenge
+        quickChallenge?.teams.forEach(function(team) {
+            team.members.forEach(function(member) {
+              if(member.userId === userId) {
+                /*if the userIsNotInChallenge is removed, the return is ignored (dont know why) and the
+                API crashes at the res.status(HTTPCodes.Unauthorized)... for: "Error [ERR_HTTP_HEADERS_SENT]: 
+                Cannot set headers after they are sent to the client"*/
+                userIsNotInChallenge = false
+                res.status(HTTPCodes.Success).json(quickChallenge)
+                return
+              }
+            })
+        })
+        if (userIsNotInChallenge) {
+          res.status(HTTPCodes.Unauthorized).json({ message: "This user is not at this challenge" })
+          return
+        }
+      }
+      catch(error) {
+        res.status(HTTPCodes.InternalServerError).json({ error: error });
+        return;
+      }
+    }
  }
 
  export enum QuickChallengeTypes {
