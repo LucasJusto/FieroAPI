@@ -4,9 +4,13 @@ import uuidV4 from "../utils/uuidv4Generator.js";
  import { QuickChallenge } from "../Model/QuickChallenge.js";
  import { QuickChallengeService } from "../Service/QuickChallengeService.js";
  import { QuickChallengeRepository } from "../Repository/QuickChallengeRepository.js";
+import { param } from "express-validator";
+import { UserService } from "../Service/UserService.js";
+import { Team } from "../Model/Team.js";
 
  const quickChallengeService = new QuickChallengeService();
  const quickChallengeRepository = new QuickChallengeRepository();
+ const userService = new UserService();
  const maxMaxTeams = 4;
 
  export class QuickChallengeController {
@@ -339,7 +343,7 @@ import uuidV4 from "../utils/uuidv4Generator.js";
                 API crashes at the res.status(HTTPCodes.Unauthorized)... for: "Error [ERR_HTTP_HEADERS_SENT]: 
                 Cannot set headers after they are sent to the client"*/
                 userIsNotInChallenge = false
-                res.status(HTTPCodes.Success).json(quickChallenge)
+                res.status(HTTPCodes.Success).json({ quickChallenge: quickChallenge })
                 return
               }
             })
@@ -350,6 +354,58 @@ import uuidV4 from "../utils/uuidv4Generator.js";
         }
       }
       catch(error) {
+        res.status(HTTPCodes.InternalServerError).json({ error: error });
+        return;
+      }
+    }
+
+    async exitFromChallengeById(req: Request, res: Response) {
+      const userId = req.body.userId
+      const quickChallengeId = req.params.quickChallengeId
+      try {
+        const user = await userService.getUserById(userId)
+        if(!user) {
+          res.status(HTTPCodes.NotFound).json({ message: "User Not found" });
+          return;
+        }
+
+        const quickChallenge = await quickChallengeService.getQuickChallengeById(quickChallengeId)
+        if(!quickChallenge) {
+          res.status(HTTPCodes.NotFound).json({ message: "QuickChallenge Not found" });
+          return;
+        }
+
+        var usersTeam
+        var isMemberInThisChallenge: boolean = false
+        quickChallenge.teams.forEach(function(team) {
+          team.members.forEach(function(member) {
+            if(member.userId === userId) {
+              isMemberInThisChallenge = true
+              usersTeam = team
+              return
+            }
+          })
+          if(isMemberInThisChallenge) {
+            return
+          }
+        })
+        if(isMemberInThisChallenge) {
+          if (usersTeam) {
+            await quickChallengeService.exitChallenge(quickChallenge, usersTeam as Team, user)
+            res.status(HTTPCodes.Success).json({ quickChallenge: quickChallenge });
+            return;
+          }
+          else {
+            res.status(HTTPCodes.InternalServerError).json({ message: "An unexpected error happened" });
+            return;
+          }
+        }
+        else {
+          res.status(HTTPCodes.BadRequest).json({ message: "This user isnt playing this challenge" });
+          return;
+        }
+      }
+      catch(error){
         res.status(HTTPCodes.InternalServerError).json({ error: error });
         return;
       }
