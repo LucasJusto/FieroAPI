@@ -184,16 +184,21 @@ import uuidV4 from "../utils/uuidv4Generator.js";
        const challenge = await quickChallengeRepository.getQuickChallengeById(quickChallengeId)
        if(challenge) {
            if(!challenge.alreadyBegin) {
-             res.status(HTTPCodes.BadRequest).json({ message: 'this challenge didnt begin yet' })
+             res.status(HTTPCodes.BadRequest).json({ message: 'This challenge didnt begin yet' })
              return
            }
            if(challenge.finished) {
-             res.status(HTTPCodes.BadRequest).json({ message: 'this challenge already finished' })
+             res.status(HTTPCodes.BadRequest).json({ message: 'This challenge already finished' })
              return
            }
+           if(!challenge.teams.some(team => team.id === teamId)) {
+            res.status(HTTPCodes.BadRequest).json({ message: 'This team isnt playing this challenge' })
+            return
+           }
+           
        }
        else {
-         res.status(HTTPCodes.BadRequest).json({ message: 'this challenge doesnt exist' })
+         res.status(HTTPCodes.NotFound).json({ message: 'Challenge not found' })
          return
        }
        //the member to be updated needs to exist.
@@ -201,7 +206,7 @@ import uuidV4 from "../utils/uuidv4Generator.js";
          //if the member has an userId, it is a real player. Else it is from someone without account in the offline mode.
          if (teamUser.userId) {
            if (userId !== teamUser.userId) {
-             res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant write in this area' })
+             res.status(HTTPCodes.Unauthorized).json({ message: 'This user cant write in this area' })
              return
            }
          }
@@ -209,27 +214,27 @@ import uuidV4 from "../utils/uuidv4Generator.js";
            if (team) {
              //if it is without userId, we need to check at least if it is coming from the device of the challenge owner.
              if (challenge?.ownerId !== userId) {
-               res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant write in this area' })
+               res.status(HTTPCodes.Unauthorized).json({ message: 'This user cant write in this area' })
                return
              }
              if (team.quickChallengeId !== quickChallengeId) {
-               res.status(HTTPCodes.BadRequest).json({ message: 'this team isnt from the challenge specified' })
+               res.status(HTTPCodes.BadRequest).json({ message: 'This team isnt from the challenge specified' })
                return
              }
            }
            else {
-             res.status(HTTPCodes.BadRequest).json({ message: 'this team doesnt exist' })
+             res.status(HTTPCodes.NotFound).json({ message: 'Team not found' })
              return
            }
          }
 
          if (teamId !== teamUser.teamId) {
-           res.status(HTTPCodes.BadRequest).json({ message: 'this team member isnt from the team specified' })
+           res.status(HTTPCodes.BadRequest).json({ message: 'This team member isnt from the team specified' })
            return
          }
        }
        else {
-         res.status(HTTPCodes.BadRequest).json({ message: 'this team member doesnt exist' })
+         res.status(HTTPCodes.NotFound).json({ message: 'Team member not found' })
          return
        }
        const member = await quickChallengeService.patchScore(score, teamUser)
