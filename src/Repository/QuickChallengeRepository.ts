@@ -246,7 +246,7 @@ export class QuickChallengeRepository {
     .execute
   }
 
-  async removeMemberAndSetNewOwner(team: Team, newOwner: TeamUser, user: User) {
+  async removeMemberAndSetNewTeamOwner(team: Team, newOwner: TeamUser, user: User) {
     await getManager().transaction(async transactionalEntityManager => {
       //update team Owner
       transactionalEntityManager.getCustomRepository(TORMTeamRepository)
@@ -261,6 +261,45 @@ export class QuickChallengeRepository {
       .createQueryBuilder()
       .delete()
       .where("userId = :id", { id: user.id })
+      .execute()
+    })
+  }
+
+  async deleteTeamAndSetNewChallengeOwner(quickChallenge: QuickChallenge, team: Team, newChallengeOwnerId: string) {
+    await getManager().transaction(async transactionalEntityManager => {
+      //delete team
+      transactionalEntityManager.getCustomRepository(TORMTeamRepository)
+      .createQueryBuilder()
+      .delete()
+      .where("id = :id", { id: team.id })
+      .execute()
+
+      //set new challenge owner
+      transactionalEntityManager.getCustomRepository(TORMQuickChallengeRepository)
+      .createQueryBuilder()
+      .update()
+      .set({ ownerId: newChallengeOwnerId })
+      .where("id = :id", { id: quickChallenge.id })
+      .execute()
+    })
+  }
+
+  async setNewTeamAndChallengeOwner(quickChallenge: QuickChallenge, team: Team, newTeamAndChallengeOwnerId: string) {
+    await getManager().transaction(async transactionalEntityManager => {
+      //set team owner
+      transactionalEntityManager.getCustomRepository(TORMTeamRepository)
+      .createQueryBuilder()
+      .update()
+      .set({ ownerId: newTeamAndChallengeOwnerId })
+      .where("id = :id", { id: team.id })
+      .execute()
+
+      //set challenge owner
+      transactionalEntityManager.getCustomRepository(TORMQuickChallengeRepository)
+      .createQueryBuilder()
+      .update()
+      .set({ ownerId: newTeamAndChallengeOwnerId })
+      .where("id = :id", { id: quickChallenge.id })
       .execute()
     })
   }

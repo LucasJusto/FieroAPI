@@ -125,7 +125,9 @@ export class QuickChallengeService {
   }
 
   async exitChallenge(quickChallenge: QuickChallenge, usersTeam: Team, user: User) {
+    //only one team at the challenge
     if(quickChallenge.teams.length <= 1) {
+      //only the owner at the challenge
       if(usersTeam.members.length <= 1) {
         await quickChallengeRepository.deleteQuickChallenge(quickChallenge)
         return
@@ -150,24 +152,59 @@ export class QuickChallengeService {
     }
     else {
       //there is more than one team at this challenge
-      if(usersTeam.members.length <= 1) {
-        //delete the team because it has only the one member who is exiting
-        await quickChallengeRepository.deleteTeamById(usersTeam.id)
-        return
+
+      //the user is not the owner of this challenge
+      if(quickChallenge.ownerId != user.id) {
+        if(usersTeam.members.length <= 1) {
+          //delete the team because it has only the one member who is exiting
+          await quickChallengeRepository.deleteTeamById(usersTeam.id)
+          return
+        }
+        else {
+          //the team needs a new owner and the user needs to get out of it
+          var newOwner
+            usersTeam.members.forEach(function(member) {
+              if(member.userId != user.id) {
+                newOwner = member
+                return
+              }
+            })
+            if(newOwner) {
+              await quickChallengeRepository.removeMemberAndSetNewTeamOwner(usersTeam, newOwner, user)
+              return
+            }
+        }
       }
       else {
-        //the team needs a new owner and the user needs to get out of it
-        var newOwner
-          usersTeam.members.forEach(function(member) {
-            if(member.userId != user.id) {
-              newOwner = member
+        //the user is the owner of the challenge
+        if(usersTeam.members.length <= 1) {
+          //get new owner for the challenge and delete the old owner's team
+          var newChallengeOwnerId: string = ''
+
+          quickChallenge.teams.forEach(function(team) {
+            if(team.ownerId != quickChallenge.ownerId) {
+              newChallengeOwnerId = (team.ownerId as string)
               return
             }
           })
-          if(newOwner) {
-            await quickChallengeRepository.removeMemberAndSetNewOwner(usersTeam, newOwner, user)
-            return
-          }
+
+          await quickChallengeRepository.deleteTeamAndSetNewChallengeOwner(quickChallenge, usersTeam, newChallengeOwnerId)
+          return
+        }
+        else {
+          //get new owner for the challenge and for the team
+          var newTeamAndChallengeOwnerId: string = ''
+
+          usersTeam.members.forEach(function(member) {
+            if(member.id != user.id) {
+              newTeamAndChallengeOwnerId = member.id
+              return
+            }
+          })
+
+          await quickChallengeRepository.setNewTeamAndChallengeOwner(quickChallenge, usersTeam, newTeamAndChallengeOwnerId)
+          return
+        }
       }
     }
   }
