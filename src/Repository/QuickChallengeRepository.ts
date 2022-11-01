@@ -3,6 +3,7 @@ import {
   createQueryBuilder,
   EntityRepository,
   getCustomRepository,
+  getManager,
   In,
   Repository,
 } from "typeorm";
@@ -215,6 +216,53 @@ export class QuickChallengeRepository {
     .getMany()
 
     return (teams as [Team])
+  }
+
+  async updateChallengeAndTeamOwner(quickChallenge: QuickChallenge, team: Team, newOwner: User) {
+    await getManager().transaction(async transactionalEntityManager => {
+      //update QuickChallenge Owner
+      transactionalEntityManager.getCustomRepository(TORMQuickChallengeRepository)
+      .createQueryBuilder()
+      .update()
+      .set({ ownerId: newOwner.id })
+      .where("id = :id", { id: quickChallenge.id })
+      .execute()
+
+      //update Team Owner
+      transactionalEntityManager.getCustomRepository(TORMTeamRepository)
+      .createQueryBuilder()
+      .update()
+      .set({ ownerId: newOwner.id, name: newOwner.name })
+      .where("id = :id", { id: team.id })
+      .execute()
+    })
+  }
+
+  async deleteTeamById(teamId: string) {
+    getCustomRepository(TORMTeamRepository)
+    .createQueryBuilder()
+    .delete()
+    .where("id = :id", { id: teamId })
+    .execute
+  }
+
+  async removeMemberAndSetNewOwner(team: Team, newOwner: TeamUser, user: User) {
+    await getManager().transaction(async transactionalEntityManager => {
+      //update team Owner
+      transactionalEntityManager.getCustomRepository(TORMTeamRepository)
+      .createQueryBuilder()
+      .update()
+      .set({ ownerId: newOwner.id })
+      .where("id = :id", { id: team.id })
+      .execute()
+
+      //remove user
+      transactionalEntityManager.getCustomRepository(TORMTeamUserRepository)
+      .createQueryBuilder()
+      .delete()
+      .where("userId = :id", { id: user.id })
+      .execute()
+    })
   }
 }
 

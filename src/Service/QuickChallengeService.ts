@@ -5,6 +5,7 @@ import { QuickChallengeRepository } from "../Repository/QuickChallengeRepository
 import { UserRepository } from "../Repository/UserRepository.js";
 import uuidV4 from "../utils/uuidv4Generator.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
+import { User } from "../Model/User.js";
 
 const quickChallengeRepository = new QuickChallengeRepository();
 const userRepository = new UserRepository();
@@ -121,5 +122,53 @@ export class QuickChallengeService {
     const quickChallengeWithNewTeam = await quickChallengeRepository.getQuickChallengeById(quickChallenge.id)
 
     return quickChallengeWithNewTeam
+  }
+
+  async exitChallenge(quickChallenge: QuickChallenge, usersTeam: Team, user: User) {
+    if(quickChallenge.teams.length <= 1) {
+      if(usersTeam.members.length <= 1) {
+        await quickChallengeRepository.deleteQuickChallenge(quickChallenge)
+        return
+      }
+      else {
+        //there is only one team at this challenge and the team has more than one member
+        if(quickChallenge.ownerId === usersTeam.ownerId) {
+          //needs new owner for the team and for the challenge
+          var newOwner
+          usersTeam.members.forEach(function(member) {
+            if(member.userId != user.id) {
+              newOwner = member
+              return
+            }
+          })
+          if(newOwner) {
+            await quickChallengeRepository.updateChallengeAndTeamOwner(quickChallenge, usersTeam, newOwner)
+            return
+          }
+        }
+      }
+    }
+    else {
+      //there is more than one team at this challenge
+      if(usersTeam.members.length <= 1) {
+        //delete the team because it has only the one member who is exiting
+        await quickChallengeRepository.deleteTeamById(usersTeam.id)
+        return
+      }
+      else {
+        //the team needs a new owner and the user needs to get out of it
+        var newOwner
+          usersTeam.members.forEach(function(member) {
+            if(member.userId != user.id) {
+              newOwner = member
+              return
+            }
+          })
+          if(newOwner) {
+            await quickChallengeRepository.removeMemberAndSetNewOwner(usersTeam, newOwner, user)
+            return
+          }
+      }
+    }
   }
 }

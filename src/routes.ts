@@ -181,18 +181,32 @@ router.patch(
   }
 );
 
-  router.get(
-    "/quickChallenge/:quickChallengeId",
-    [
-      authToken(),
-      validate([
-        param("quickChallengeId").isString().notEmpty()
-      ])
-    ],
-    async (req: Request, res: Response) => {
-      quickChallengeController.getQuickChallengeById(req, res)
-    }
-  );
+router.get(
+  "/quickChallenge/:quickChallengeId",
+  [
+    authToken(),
+    validate([
+      param("quickChallengeId").isString().notEmpty()
+    ])
+  ],
+  async (req: Request, res: Response) => {
+    quickChallengeController.getQuickChallengeById(req, res)
+  }
+);
+
+router.delete(
+  "/quickChallenge/exit/:quickChallengeId",
+  [
+    authToken(),
+    validate([
+      body("userId").isString().notEmpty(),
+      param("quickChallengeId").isString().notEmpty()
+    ])
+  ],
+  async (req: Request, res: Response) => {
+    quickChallengeController.exitFromChallengeById(req, res)
+  }
+);
 
 
 export default router;

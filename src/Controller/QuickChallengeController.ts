@@ -392,7 +392,7 @@ import { Team } from "../Model/Team.js";
         if(isMemberInThisChallenge) {
           if (usersTeam) {
             await quickChallengeService.exitChallenge(quickChallenge, usersTeam as Team, user)
-            res.status(HTTPCodes.Success).json({ quickChallenge: quickChallenge });
+            res.status(HTTPCodes.Success).json({ message: "Exited successfully" });
             return;
           }
           else {
