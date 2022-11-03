@@ -239,11 +239,11 @@ export class QuickChallengeRepository {
   }
 
   async deleteTeamById(teamId: string) {
-    getCustomRepository(TORMTeamRepository)
+    await getCustomRepository(TORMTeamRepository)
     .createQueryBuilder()
     .delete()
     .where("id = :id", { id: teamId })
-    .execute
+    .execute()
   }
 
   async removeMemberAndSetNewTeamOwner(team: Team, newOwner: TeamUser, user: User) {
