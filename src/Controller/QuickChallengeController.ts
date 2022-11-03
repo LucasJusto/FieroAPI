@@ -410,6 +410,66 @@ import { Team } from "../Model/Team.js";
         return;
       }
     }
+
+    async removeParticipantById(req: Request, res: Response) {
+      const { userId, userToDeleteId } = req.body
+      const quickChallengeId = req.params.quickChallengeId
+
+      try {
+        const owner = await userService.getUserById(userId)
+
+        if(!owner) {
+          res.status(HTTPCodes.NotFound).json({ message: 'User with id ' + userId + 'not found.' });
+          return;
+        }
+
+        const quickChallenge = await quickChallengeService.getQuickChallengeById(quickChallengeId)
+
+        if(!quickChallenge) {
+          res.status(HTTPCodes.NotFound).json({ message: 'QuickChallenge not found.' });
+          return;
+        }
+
+        const userToBeRemoved = await userService.getUserById(userToDeleteId)
+
+        if(!userToBeRemoved) {
+          res.status(HTTPCodes.NotFound).json({ message: 'User with id ' + userToDeleteId + 'not found.' });
+          return;
+        }
+
+        if(quickChallenge.ownerId != owner.id) {
+          res.status(HTTPCodes.Unauthorized).json({ message: 'Only the owner have permission to remove participants from a quick challenge.' })
+          return
+        }
+        var isUserToDeleteInChallenge = false
+
+        quickChallenge.teams.forEach(function(team) {
+          team.members.forEach(function(member) {
+            if(member.id === userToBeRemoved.id) {
+              isUserToDeleteInChallenge = true
+              return
+            }
+          })
+          if(isUserToDeleteInChallenge) {
+            return
+          }
+        })
+
+        if(isUserToDeleteInChallenge) {
+          const quickChallengeWithoutRemovedUser = await quickChallengeService.removeParticipant(quickChallenge, userToBeRemoved)
+          res.status(HTTPCodes.Success).json({ quickChallenge: quickChallengeWithoutRemovedUser })
+          return
+        }
+        else {
+          res.status(HTTPCodes.BadRequest).json({ message: 'The user to be removed is not at this challenge' })
+          return
+        }
+      }
+      catch(error) {
+        res.status(HTTPCodes.InternalServerError).json({ error: error });
+        return;
+      }
+    }
  }
 
  export enum QuickChallengeTypes {

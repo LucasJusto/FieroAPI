@@ -89,7 +89,7 @@ router.post(
       body("type").isString().notEmpty(),
       body("goal").isNumeric().notEmpty(),
       body("goalMeasure").isString().notEmpty(),
-      body("userId").isString().notEmpty(),
+      body("userId").isUUID().notEmpty(),
       body("online").isBoolean().notEmpty(),
       body("maxTeams").isNumeric().notEmpty(),
     ]),
@@ -114,7 +114,7 @@ router.post(
 
 router.get(
   "/quickChallenge/createdByMe",
-  [authToken(), validate([body("userId").isString().notEmpty()])],
+  [authToken(), validate([body("userId").isUUID().notEmpty()])],
   async (req: Request, res: Response) => {
     quickChallengeController.getUserQuickChallengesById(req, res);
   }
@@ -130,7 +130,7 @@ router.get(
 
 router.delete(
   "/quickChallenge/:id",
-  [authToken(), validate([body("userId").isString().notEmpty()])],
+  [authToken(), validate([body("userId").isUUID().notEmpty()])],
   async (req: Request, res: Response) => {
     quickChallengeController.deleteQuickChallenge(req, res);
   }
@@ -143,9 +143,9 @@ router.patch(
     authToken(),
     validate([
       body("score").isNumeric().notEmpty(),
-      param("quickChallengeId").isString().notEmpty(),
-      param("teamId").isString().notEmpty(),
-      param("teamMemberId").isString().notEmpty(),
+      param("quickChallengeId").isUUID().notEmpty(),
+      param("teamId").isUUID().notEmpty(),
+      param("teamMemberId").isUUID().notEmpty(),
     ]),
   ],
   async (req: Request, res: Response) => {
@@ -159,7 +159,7 @@ router.patch(
     authToken(),
     validate([
       body("alreadyBegin").isBoolean().notEmpty(),
-      param("quickChallengeId").isString().notEmpty(),
+      param("quickChallengeId").isUUID().notEmpty(),
     ]),
   ],
   async (req: Request, res: Response) => {
@@ -173,7 +173,7 @@ router.patch(
     authToken(),
     validate([
       body("finished").isBoolean().notEmpty(),
-      param("quickChallengeId").isString().notEmpty(),
+      param("quickChallengeId").isUUID().notEmpty(),
     ]),
   ],
   async (req: Request, res: Response) => {
@@ -186,7 +186,7 @@ router.get(
   [
     authToken(),
     validate([
-      param("quickChallengeId").isString().notEmpty()
+      param("quickChallengeId").isUUID().notEmpty()
     ])
   ],
   async (req: Request, res: Response) => {
@@ -199,12 +199,27 @@ router.delete(
   [
     authToken(),
     validate([
-      body("userId").isString().notEmpty(),
-      param("quickChallengeId").isString().notEmpty()
+      body("userId").isUUID().notEmpty(),
+      param("quickChallengeId").isUUID().notEmpty()
     ])
   ],
   async (req: Request, res: Response) => {
     quickChallengeController.exitFromChallengeById(req, res)
+  }
+);
+
+router.delete(
+  "/quickChallenge/removeParticipant/:quickChallengeId",
+  [
+    authToken(),
+    validate([
+      body("userId").isUUID().notEmpty(),
+      body("userToDeleteId").isUUID().notEmpty(),
+      param("quickChallengeId").isUUID().notEmpty()
+    ])
+  ],
+  async (req: Request, res: Response) => {
+    quickChallengeController.removeParticipantById(req, res)
   }
 );
 
