@@ -208,4 +208,35 @@ export class QuickChallengeService {
       }
     }
   }
+
+  async removeParticipant(quickChallenge: QuickChallenge, userToBeRemoved: User) {
+    var usersTeam: Team | undefined = undefined
+    quickChallenge.teams.forEach(function(team) {
+      team.members.forEach(function(member) {
+        if(member.id === userToBeRemoved.id) {
+          usersTeam = team
+          return
+        }
+      })
+      if(usersTeam) {
+        return
+      }
+    })
+    if(typeof usersTeam != 'undefined') {
+      const team = usersTeam as Team
+      if(team.ownerId === userToBeRemoved.id && team.members.length > 1) {
+        var newOwner = team.members[0]
+        team.members.forEach(function(member) {
+          if(member.id != team.ownerId) {
+            newOwner = member
+            return
+          }
+        })
+        return await quickChallengeRepository.removeMemberAndSetNewTeamOwner(team, newOwner, userToBeRemoved)
+      }
+      else {
+        return await quickChallengeRepository.removeMemberFromTeam(userToBeRemoved)
+      }
+    }
+  }
 }
