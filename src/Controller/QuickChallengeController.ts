@@ -437,6 +437,10 @@ import { Team } from "../Model/Team.js";
           return;
         }
 
+        if(userToBeRemoved.id === owner.id) {
+          res.status(HTTPCodes.BadRequest).json({ message: 'You cant remove yourself.' })
+        }
+
         if(quickChallenge.ownerId != owner.id) {
           res.status(HTTPCodes.Unauthorized).json({ message: 'Only the owner have permission to remove participants from a quick challenge.' })
           return
