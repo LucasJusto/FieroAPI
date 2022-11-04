@@ -48,8 +48,8 @@ import { Team } from "../Model/Team.js";
        return;
      } 
      else if (
-       type === QuickChallengeTypes.amount &&
-       !Object.values(QuickChallengeAmountMeasures).includes(goalMeasure)
+       (type === QuickChallengeTypes.amount || type === QuickChallengeTypes.volleyball 
+        || type === QuickChallengeTypes.truco) && !Object.values(QuickChallengeAmountMeasures).includes(goalMeasure)
      ) {
        res.status(HTTPCodes.BadRequest).json({
          message: "invalid goalMeasure for Amount type",
@@ -480,6 +480,8 @@ import { Team } from "../Model/Team.js";
    amount = "amount",
    byTime = "byTime",
    bestof = "bestof",
+   volleyball = "volleyball",
+   truco = "truco"
  }
 
  export enum QuickChallengeAmountMeasures {
