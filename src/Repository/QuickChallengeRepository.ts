@@ -303,14 +303,6 @@ export class QuickChallengeRepository {
       .execute()
     })
   }
-
-  async removeMemberFromTeam(memberToBeRemoved: User | TeamUser) {
-    getCustomRepository(TORMTeamUserRepository)
-    .createQueryBuilder()
-    .delete()
-    .where("userId = :id", { id: memberToBeRemoved.id })
-    .execute()
-  }
 }
 
 @EntityRepository(QuickChallenge)

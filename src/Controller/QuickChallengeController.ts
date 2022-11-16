@@ -450,7 +450,7 @@ import { Team } from "../Model/Team.js";
 
         quickChallenge.teams.forEach(function(team) {
           team.members.forEach(function(member) {
-            if(member.id === userToBeRemoved.id) {
+            if(member.userId === userToBeRemoved.id) {
               isUserToDeleteInChallenge = true
               return
             }
@@ -461,7 +461,8 @@ import { Team } from "../Model/Team.js";
         })
 
         if(isUserToDeleteInChallenge) {
-          const quickChallengeWithoutRemovedUser = await quickChallengeService.removeParticipant(quickChallenge, userToBeRemoved)
+          await quickChallengeService.removeParticipant(quickChallenge, userToBeRemoved)
+          const quickChallengeWithoutRemovedUser = await quickChallengeService.getQuickChallengeById(quickChallenge.id)
           res.status(HTTPCodes.Success).json({ quickChallenge: quickChallengeWithoutRemovedUser })
           return
         }

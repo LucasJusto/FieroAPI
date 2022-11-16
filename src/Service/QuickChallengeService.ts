@@ -213,7 +213,7 @@ export class QuickChallengeService {
     var usersTeam: Team | undefined = undefined
     quickChallenge.teams.forEach(function(team) {
       team.members.forEach(function(member) {
-        if(member.id === userToBeRemoved.id) {
+        if(member.userId === userToBeRemoved.id) {
           usersTeam = team
           return
         }
@@ -227,7 +227,7 @@ export class QuickChallengeService {
       if(team.ownerId === userToBeRemoved.id && team.members.length > 1) {
         var newOwner = team.members[0]
         team.members.forEach(function(member) {
-          if(member.id != team.ownerId) {
+          if(member.userId != team.ownerId) {
             newOwner = member
             return
           }
@@ -235,7 +235,7 @@ export class QuickChallengeService {
         return await quickChallengeRepository.removeMemberAndSetNewTeamOwner(team, newOwner, userToBeRemoved)
       }
       else {
-        return await quickChallengeRepository.removeMemberFromTeam(userToBeRemoved)
+        return await quickChallengeRepository.deleteTeamById(team.id)
       }
     }
   }
