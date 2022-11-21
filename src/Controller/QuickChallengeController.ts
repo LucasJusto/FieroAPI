@@ -282,10 +282,11 @@ import { Team } from "../Model/Team.js";
        const quickChallenge = await quickChallengeRepository.getQuickChallengeById(quickChallengeId)
        
        if (quickChallenge) {
-           if (quickChallenge.ownerId !== userId) {
-               res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant finish this challenge' })
-               return
-           }
+        //not owner can actually finish it when getting max points
+          //  if (quickChallenge.ownerId !== userId) {
+          //      res.status(HTTPCodes.Unauthorized).json({ message: 'this user cant finish this challenge' })
+          //      return
+          //  }
            if (!quickChallenge.alreadyBegin) {
                res.status(HTTPCodes.BadRequest).json({ message: 'cant finish a challenge that didnt begin' })
                return
